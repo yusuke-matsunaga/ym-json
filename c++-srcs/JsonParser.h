@@ -9,14 +9,13 @@
 /// All rights reserved.
 
 #include "ym/json.h"
-#include "ym/FileInfo.h"
-#include "ym/FileRegion.h"
 
 
 BEGIN_NAMESPACE_YM_JSON
 
 class JsonObj;
 class JsonScanner;
+class Region;
 
 //////////////////////////////////////////////////////////////////////
 /// @class JsonParser JsonParser.h "JsonParser.h"
@@ -41,8 +40,7 @@ public:
   /// @brief 読み込む．
   JsonObj*
   read(
-    istream& s,               ///< [in] 入力ストリーム
-    const FileInfo& file_info ///< [in] ファイル情報
+    istream& s ///< [in] 入力ストリーム
   );
 
 
@@ -66,8 +64,7 @@ private:
   /// @brief エラーを出力する．
   void
   error(
-    const string& msg,    ///< [in] メッセージ
-    const FileRegion& loc ///< [in] ファイル位置
+    const string& msg ///< [in] メッセージ
   );
 
 

@@ -10,8 +10,8 @@
 #include "JsonParser.h"
 #include "JsonObj.h"
 #include "ym/JsonValue.h"
-#include "ym/MsgMgr.h"
-#include "ym/StreamMsgHandler.h"
+//#include "ym/MsgMgr.h"
+//#include "ym/StreamMsgHandler.h"
 
 
 BEGIN_NAMESPACE_YM_JSON
@@ -22,7 +22,7 @@ TEST(JsonParserTest, int)
 
   JsonParser parser;
 
-  auto value = parser.read(s, FileInfo{});
+  auto value = parser.read(s);
   EXPECT_TRUE( value->is_object() );
   auto value1 = value->get_value("key");
   EXPECT_TRUE( value1.is_int() );
@@ -35,7 +35,7 @@ TEST(JsonParserTest, float)
 
   JsonParser parser;
 
-  auto value = parser.read(s, FileInfo{});
+  auto value = parser.read(s);
   EXPECT_TRUE( value->is_object() );
   auto value1 = value->get_value("key");
   EXPECT_TRUE( value1.is_float() );
@@ -48,7 +48,7 @@ TEST(JsonParserTest, string)
 
   JsonParser parser;
 
-  auto value = parser.read(s, FileInfo{});
+  auto value = parser.read(s);
   EXPECT_TRUE( value->is_object() );
   auto value1 = value->get_value("key");
   EXPECT_TRUE( value1.is_string() );
@@ -61,7 +61,7 @@ TEST(JsonParserTest, true)
 
   JsonParser parser;
 
-  auto value = parser.read(s, FileInfo{});
+  auto value = parser.read(s);
   EXPECT_TRUE( value->is_object() );
   auto value1 = value->get_value("key");
   EXPECT_TRUE( value1.is_bool() );
@@ -74,7 +74,7 @@ TEST(JsonParserTest, false)
 
   JsonParser parser;
 
-  auto value = parser.read(s, FileInfo{});
+  auto value = parser.read(s);
   EXPECT_TRUE( value->is_object() );
   auto value1 = value->get_value("key");
   EXPECT_TRUE( value1.is_bool() );
@@ -87,7 +87,7 @@ TEST(JsonParserTest, null)
 
   JsonParser parser;
 
-  auto value = parser.read(s, FileInfo{});
+  auto value = parser.read(s);
   EXPECT_TRUE( value->is_object() );
   auto value1 = value->get_value("key");
   EXPECT_TRUE( value1.is_null() );
@@ -99,7 +99,7 @@ TEST(JsonParserTest, object2)
 
   JsonParser parser;
 
-  auto value = parser.read(s, FileInfo{});
+  auto value = parser.read(s);
   EXPECT_TRUE( value->is_object() );
   auto value1 = value->get_value("key1");
   EXPECT_TRUE( value1.is_int() );
@@ -113,10 +113,10 @@ TEST(JsonParserTest, array)
 
   JsonParser parser;
 
-  StreamMsgHandler handler{cout};
-  MsgMgr::attach_handler(&handler);
+  //StreamMsgHandler handler{cout};
+  //MsgMgr::attach_handler(&handler);
 
-  auto value = parser.read(s, FileInfo{});
+  auto value = parser.read(s);
   EXPECT_TRUE( value->is_object() );
   auto value1 = value->get_value("key");
   EXPECT_TRUE( value1.is_array() );
@@ -135,10 +135,10 @@ TEST(JsonParserTest, null_array)
 
   JsonParser parser;
 
-  StreamMsgHandler handler{cout};
-  MsgMgr::attach_handler(&handler);
+  //StreamMsgHandler handler{cout};
+  //MsgMgr::attach_handler(&handler);
 
-  auto value = parser.read(s, FileInfo{});
+  auto value = parser.read(s);
   EXPECT_TRUE( value->is_object() );
   auto value1 = value->get_value("key");
   EXPECT_TRUE( value1.is_array() );
@@ -152,7 +152,7 @@ TEST(JsonParserTest, bad1)
   JsonParser parser;
 
   EXPECT_THROW(
-    auto value = parser.read(s, FileInfo{}),
+    auto value = parser.read(s),
     std::invalid_argument
   );
 }
@@ -164,7 +164,7 @@ TEST(JsonParserTest, read_value_bad1)
   JsonParser parser;
 
   EXPECT_THROW(
-    auto value = parser.read(s, FileInfo{}),
+    auto value = parser.read(s),
     std::invalid_argument
   );
 }
@@ -176,7 +176,7 @@ TEST(JsonParserTest, object_bad1)
   JsonParser parser;
 
   EXPECT_THROW(
-    auto value = parser.read(s, FileInfo{}),
+    auto value = parser.read(s),
     std::invalid_argument
   );
 }
@@ -188,7 +188,7 @@ TEST(JsonParserTest, object_bad2)
   JsonParser parser;
 
   EXPECT_THROW(
-    auto value = parser.read(s, FileInfo{}),
+    auto value = parser.read(s),
     std::invalid_argument
   );
 }
@@ -200,7 +200,7 @@ TEST(JsonParserTest, object_bad3)
   JsonParser parser;
 
   EXPECT_THROW(
-    auto value = parser.read(s, FileInfo{}),
+    auto value = parser.read(s),
     std::invalid_argument
   );
 }
@@ -212,7 +212,7 @@ TEST(JsonParserTest, object_bad4)
   JsonParser parser;
 
   EXPECT_THROW(
-    auto value = parser.read(s, FileInfo{}),
+    auto value = parser.read(s),
     std::invalid_argument
   );
 }
@@ -224,7 +224,7 @@ TEST(JsonParserTest, array_bad1)
   JsonParser parser;
 
   EXPECT_THROW(
-    auto value = parser.read(s, FileInfo{}),
+    auto value = parser.read(s),
     std::invalid_argument
   );
 }
@@ -236,7 +236,7 @@ TEST(JsonParserTest, array_bad2)
   JsonParser parser;
 
   EXPECT_THROW(
-    auto value = parser.read(s, FileInfo{}),
+    auto value = parser.read(s),
     std::invalid_argument
   );
 }

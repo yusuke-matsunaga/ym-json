@@ -7,16 +7,21 @@
 /// All rights reserved.
 
 #include "JsonScanner.h"
-#include "ym/MsgMgr.h"
 
 
 BEGIN_NAMESPACE_YM_JSON
 
 // @brief コンストラクタ
 JsonScanner::JsonScanner(
-  istream& s,
-  const FileInfo& file_info
-) : Scanner{s, file_info}
+  istream& s
+) : mS{s},
+    mCurLine{1},
+    mCurColumn{1},
+    mFirstLine{1},
+    mFirstColumn{1},
+    mNextLine{1},
+    mNextColumn{1},
+    mNeedUpdate{true}
 {
 }
 
@@ -30,7 +35,7 @@ JsonScanner::read_token()
     return tk;
   }
   auto tk = scan();
-  mCurLoc = cur_region();
+  mCurLoc = Region{mFirstLine, mFirstColumn, mCurLine, mCurColumn};
   return tk;
 }
 
@@ -380,40 +385,7 @@ JsonScanner::scan()
   goto ST_CM2;
 
  ST_ERROR:
-  MsgMgr::put_msg(__FILE__, __LINE__,
-		  cur_region(),
-		  MsgType::Error,
-		  "JSON_SYNTAX_ERROR",
-		  "syntax_error");
   throw std::invalid_argument{"Syntax error"};
-}
-
-// @brief 直前の read_token() で読み出した字句の文字列を返す．
-string
-JsonScanner::cur_string()
-{
-  return mCurString;
-}
-
-// @brief 直前の read_token() 読み出した字句の整数を返す．
-int
-JsonScanner::cur_int()
-{
-  return atoi(mCurString.c_str());
-}
-
-// @brief 直前の read_token() 読み出した字句の浮動小数点数を返す．
-double
-JsonScanner::cur_float()
-{
-  return atof(mCurString.c_str());
-}
-
-// @brief 直前の read_token() で読み出した字句のファイル上の位置を返す．
-FileRegion
-JsonScanner::cur_loc()
-{
-  return mCurLoc;
 }
 
 // @brief 'true' を読み込む．
@@ -465,6 +437,62 @@ JsonScanner::read_null()
     return false;
   }
   return true;
+}
+
+// @brief peek() の下請け関数
+void
+JsonScanner::update()
+{
+  int c = mS.peek();
+  mS.ignore();
+
+  // Windows(DOS)/Mac/UNIX の間で改行コードの扱いが異なるのでここで
+  // 強制的に '\n' に書き換えてしまう．
+  // Windows : '\r', '\n'
+  // Mac     : '\r'
+  // UNIX    : '\n'
+  // なので '\r' を '\n' に書き換えてしまう．
+  // ただし次に本当の '\n' が来たときには無視するために
+  // mCR を true にしておく．
+  if ( c == '\r' ) {
+    c = mS.peek();
+    if ( c != '\n' ) {
+      // MAC 形式 ('\r' のみ)
+      c = '\n';
+    }
+    else {
+      // Windows 形式 ('\r', '\n')
+      mS.ignore();
+    }
+  }
+  mNeedUpdate = false;
+  mNextChar = c;
+}
+
+// @brief 直前の peek() を確定させる．
+void
+JsonScanner::accept()
+{
+  ASSERT_COND( mNeedUpdate == false );
+
+  mNeedUpdate = true;
+  mCurLine = mNextLine;
+  mCurColumn = mNextColumn;
+  // mNextLine と mNextColumn を先に設定しておく
+  if ( mNextChar == '\n' ) {
+    check_line(mCurLine);
+    ++ mNextLine;
+    mNextColumn = 0;
+  }
+  ++ mNextColumn;
+}
+
+// @brief 改行を読み込んだ時に起動する関数
+void
+JsonScanner::check_line(
+  int line
+)
+{
 }
 
 END_NAMESPACE_YM_JSON

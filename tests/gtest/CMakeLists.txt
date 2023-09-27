@@ -25,22 +25,16 @@ include_directories (
 ym_add_gtest ( json_JsonScannerTest
   JsonScannerTest.cc
   $<TARGET_OBJECTS:ym_json_obj_d>
-  $<TARGET_OBJECTS:ym_fileinfo_obj_d>
-  $<TARGET_OBJECTS:ym_msg_obj_d>
   )
 
 ym_add_gtest ( json_JsonParserTest
   JsonParserTest.cc
   $<TARGET_OBJECTS:ym_json_obj_d>
-  $<TARGET_OBJECTS:ym_fileinfo_obj_d>
-  $<TARGET_OBJECTS:ym_msg_obj_d>
   )
 
 ym_add_gtest ( json_JsonTest
   JsonTest.cc
   $<TARGET_OBJECTS:ym_json_obj_d>
-  $<TARGET_OBJECTS:ym_fileinfo_obj_d>
-  $<TARGET_OBJECTS:ym_msg_obj_d>
   DEFINITIONS
   "-DTESTDATA_DIR=\"${TESTDATA_DIR}\""
   )

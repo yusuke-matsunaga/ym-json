@@ -274,7 +274,7 @@ JsonValue::read(
   }
 
   JsonParser parser;
-  auto obj = parser.read(s, FileInfo{filename});
+  auto obj = parser.read(s);
   return JsonValue{obj};
 }
 
@@ -286,7 +286,7 @@ JsonValue::parse(
 {
   istringstream s{json_str};
   JsonParser parser;
-  auto obj = parser.read(s, FileInfo{});
+  auto obj = parser.read(s);
   return JsonValue{obj};
 }
 
@@ -328,7 +328,7 @@ operator>>(
 )
 {
   nsJson::JsonParser parser;
-  auto obj = parser.read(s, FileInfo{});
+  auto obj = parser.read(s);
   json_obj = JsonValue{obj};
   return s;
 }
@@ -336,8 +336,8 @@ operator>>(
 // @brief ストリーム出力演算子
 ostream&
 operator<<(
-  ostream& s,               ///< [in] 出力ストリーム
-  const JsonValue& json_obj ///< [in] 体操のオブジェクト
+  ostream& s,
+  const JsonValue& json_obj
 )
 {
   json_obj.write(s);

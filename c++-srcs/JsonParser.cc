@@ -10,7 +10,6 @@
 #include "JsonScanner.h"
 #include "JsonObj.h"
 #include "ym/JsonValue.h"
-#include "ym/MsgMgr.h"
 
 
 BEGIN_NAMESPACE_YM_JSON
@@ -28,17 +27,15 @@ JsonParser::~JsonParser()
 // @brief 読み込む．
 JsonObj*
 JsonParser::read(
-  istream& s,
-  const FileInfo& file_info
+  istream& s
 )
 {
-  JsonScanner scanner{s, file_info};
+  JsonScanner scanner{s};
   mScanner = &scanner;
 
   auto tk = mScanner->read_token();
   if ( tk != JsonToken::LCB ) {
-    auto loc = mScanner->cur_loc();
-    error("'{' is expected.", loc);
+    error("'{' is expected.");
   }
   return read_object();
 }
@@ -78,8 +75,7 @@ JsonParser::read_value()
     {
       ostringstream buf;
       buf << "'" << mScanner->cur_string() << "': unexpected token";
-      auto loc = mScanner->cur_loc();
-      error(buf.str(), loc);
+      error(buf.str());
     }
   }
 
@@ -90,7 +86,6 @@ JsonParser::read_value()
 JsonObj*
 JsonParser::read_object()
 {
-
   unordered_map<string, JsonValue> dict;
   auto tk = mScanner->read_token();
   if ( tk == JsonToken::RCB ) {
@@ -106,19 +101,17 @@ JsonParser::read_object()
       tk = mScanner->read_token();
       if ( tk != JsonToken::Colon ) {
 	// ':' ではなかった．
-	auto loc = mScanner->cur_loc();
-	error("':' is expected", loc);
+	error("':' is expected");
       }
       auto value = read_value();
       dict.emplace(key, JsonValue{value});
     }
     else {
       // シンタックスエラー
-      auto loc = mScanner->cur_loc();
       ostringstream buf;
       buf << mScanner->cur_string()
 	  << ": illegal token, string is expected";
-      error(buf.str(), loc);
+      error(buf.str());
     }
 
     tk = mScanner->read_token();
@@ -128,11 +121,10 @@ JsonParser::read_object()
 
     if ( tk != JsonToken::Comma ) {
       // シンタックスエラー
-      auto loc = mScanner->cur_loc();
       ostringstream buf;
       buf << mScanner->cur_string()
 	  << ": illegal token, ',' is expected";
-      error(buf.str(), loc);
+      error(buf.str());
     }
   }
   auto obj = new JsonDict{dict};
@@ -151,8 +143,7 @@ JsonParser::read_array()
   }
   if ( tk == JsonToken::End ) {
     // シンタックスエラー
-    auto loc = mScanner->cur_loc();
-    error("unexpected EOF", loc);
+    error("unexpected EOF");
   }
 
   mScanner->unget_token(tk);
@@ -166,11 +157,10 @@ JsonParser::read_array()
     }
     if ( tk != JsonToken::Comma ) {
       // シンタックスエラー
-      auto loc = mScanner->cur_loc();
       ostringstream buf;
       buf << mScanner->cur_string()
 	  << ": illegal token, ',' is expected";
-      error(buf.str(), loc);
+      error(buf.str());
     }
   }
   auto obj = new JsonArray{array};
@@ -180,16 +170,13 @@ JsonParser::read_array()
 // @brief エラーを出力する．
 void
 JsonParser::error(
-  const string& msg,
-  const FileRegion& loc
+  const string& msg
 )
 {
-  MsgMgr::put_msg(__FILE__, __LINE__,
-		  loc,
-		  MsgType::Error,
-		  "JSON_SYNTAX_ERROR",
-		  msg);
-  throw std::invalid_argument(msg);
+  ostringstream buf;
+  buf << mScanner->cur_loc()
+      << ": " << msg;
+  throw std::invalid_argument(buf.str());
 }
 
 END_NAMESPACE_YM_JSON
