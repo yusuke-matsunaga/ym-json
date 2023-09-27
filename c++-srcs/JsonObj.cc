@@ -170,6 +170,15 @@ JsonObj::emplace(
   ASSERT_NOT_REACHED;
 }
 
+// @brief 要素を追加する．
+void
+JsonObj::append(
+  const JsonValue& value
+)
+{
+  ASSERT_NOT_REACHED;
+}
+
 // @brief JsonValue の内容を取り出す．
 JsonObj*
 JsonObj::obj_ptr(
@@ -356,6 +365,15 @@ JsonArray::get_value(
 {
   ASSERT_COND( 0 <= pos && pos < array_size() );
   return mArray[pos];
+}
+
+// @brief 要素を追加する．
+void
+JsonArray::append(
+  const JsonValue& value
+)
+{
+  mArray.push_back(value);
 }
 
 // @brief 内容を書き出す．

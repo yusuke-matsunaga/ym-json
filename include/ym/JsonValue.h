@@ -73,6 +73,14 @@ public:
     return JsonValue{unordered_map<string, JsonValue>{}};
   }
 
+  /// @brief 配列型のインスタンスを作る関数
+  static
+  JsonValue
+  Array()
+  {
+    return JsonValue{vector<JsonValue>{}};
+  }
+
   /// @brief 値を指定したコンストラクタ
   JsonValue(
     JsonObj* value ///< [in] 値
@@ -220,6 +228,201 @@ public:
     const JsonValue& value ///< [in] 値
   );
 
+  /// @brief オブジェクト型の要素を追加する．
+  ///
+  /// - オブジェクト型でない場合は無効
+  void
+  emplace(
+    const char* key,       ///< [in] キー
+    const JsonValue& value ///< [in] 値
+  )
+  {
+    emplace(string{key}, value);
+  }
+
+  /// @brief オブジェクト型の要素を追加する．
+  ///
+  /// - オブジェクト型でない場合は無効
+  void
+  emplace(
+    const string& key,     ///< [in] キー
+    const string& value    ///< [in] 値
+  )
+  {
+    emplace(key, JsonValue{value});
+  }
+
+  /// @brief オブジェクト型の要素を追加する．
+  ///
+  /// - オブジェクト型でない場合は無効
+  void
+  emplace(
+    const char* key,     ///< [in] キー
+    const string& value  ///< [in] 値
+  )
+  {
+    emplace(key, JsonValue{value});
+  }
+
+  /// @brief オブジェクト型の要素を追加する．
+  ///
+  /// - オブジェクト型でない場合は無効
+  void
+  emplace(
+    const string& key,   ///< [in] キー
+    const char* value    ///< [in] 値
+  )
+  {
+    emplace(key, JsonValue{value});
+  }
+
+  /// @brief オブジェクト型の要素を追加する．
+  ///
+  /// - オブジェクト型でない場合は無効
+  void
+  emplace(
+    const char* key,   ///< [in] キー
+    const char* value  ///< [in] 値
+  )
+  {
+    emplace(key, JsonValue{value});
+  }
+
+  /// @brief オブジェクト型の要素を追加する．
+  ///
+  /// - オブジェクト型でない場合は無効
+  void
+  emplace(
+    const string& key,  ///< [in] キー
+    int value           ///< [in] 値
+  )
+  {
+    emplace(key, JsonValue{value});
+  }
+
+  /// @brief オブジェクト型の要素を追加する．
+  ///
+  /// - オブジェクト型でない場合は無効
+  void
+  emplace(
+    const char* key,  ///< [in] キー
+    int value         ///< [in] 値
+  )
+  {
+    emplace(key, JsonValue{value});
+  }
+
+  /// @brief オブジェクト型の要素を追加する．
+  ///
+  /// - オブジェクト型でない場合は無効
+  void
+  emplace(
+    const string& key,  ///< [in] キー
+    float value         ///< [in] 値
+  )
+  {
+    emplace(key, JsonValue{value});
+  }
+
+  /// @brief オブジェクト型の要素を追加する．
+  ///
+  /// - オブジェクト型でない場合は無効
+  void
+  emplace(
+    const char* key,  ///< [in] キー
+    float value       ///< [in] 値
+  )
+  {
+    emplace(key, JsonValue{value});
+  }
+
+  /// @brief オブジェクト型の要素を追加する．
+  ///
+  /// - オブジェクト型でない場合は無効
+  void
+  emplace(
+    const string& key,  ///< [in] キー
+    bool value          ///< [in] 値
+  )
+  {
+    emplace(key, JsonValue{value});
+  }
+
+  /// @brief オブジェクト型の要素を追加する．
+  ///
+  /// - オブジェクト型でない場合は無効
+  void
+  emplace(
+    const char* key,  ///< [in] キー
+    bool value        ///< [in] 値
+  )
+  {
+    emplace(key, JsonValue{value});
+  }
+
+  /// @brief 配列型の要素を追加する．
+  ///
+  /// - 配列型でない場合は無効
+  void
+  append(
+    const JsonValue& value ///< [in] 値
+  );
+
+  /// @brief 配列型の要素を追加する．
+  ///
+  /// - 配列型でない場合は無効
+  void
+  append(
+    const string& value ///< [in] 値
+  )
+  {
+    append(JsonValue{value});
+  }
+
+  /// @brief 配列型の要素を追加する．
+  ///
+  /// - 配列型でない場合は無効
+  void
+  append(
+    const char* value ///< [in] 値
+  )
+  {
+    append(JsonValue{value});
+  }
+
+  /// @brief 配列型の要素を追加する．
+  ///
+  /// - 配列型でない場合は無効
+  void
+  append(
+    int value ///< [in] 値
+  )
+  {
+    append(JsonValue{value});
+  }
+
+  /// @brief 配列型の要素を追加する．
+  ///
+  /// - 配列型でない場合は無効
+  void
+  append(
+    float value ///< [in] 値
+  )
+  {
+    append(JsonValue{value});
+  }
+
+  /// @brief 配列型の要素を追加する．
+  ///
+  /// - 配列型でない場合は無効
+  void
+  append(
+    bool value ///< [in] 値
+  )
+  {
+    append(JsonValue{value});
+  }
+
   /// @brief 読み込む．
   /// @return 結果を格納したオブジェクトを返す．
   static
@@ -330,5 +533,23 @@ private:
 };
 
 END_NAMESPACE_YM_JSON
+
+BEGIN_NAMESPACE_YM
+
+/// @brief ストリーム入力演算子
+istream&
+operator>>(
+  istream& s,         ///< [in] 入力ストリーム
+  JsonValue& json_obj ///< [out] 結果を格納するオブジェクト
+);
+
+/// @brief ストリーム出力演算子
+ostream&
+operator<<(
+  ostream& s,               ///< [in] 出力ストリーム
+  const JsonValue& json_obj ///< [in] 体操のオブジェクト
+);
+
+END_NAMESPACE_YM
 
 #endif // JSONVALUE_H

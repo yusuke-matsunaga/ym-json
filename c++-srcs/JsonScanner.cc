@@ -88,11 +88,11 @@ JsonScanner::scan()
     goto ST_DQ;
 
   case '-':
-    mCurString.put_char(c);
+    mCurString += static_cast<char>(c);
     goto ST_NUM_MINUS;
 
   case '0':
-    mCurString.put_char(c);
+    mCurString += static_cast<char>(c);
     goto ST_NUM0;
 
   case '1':
@@ -104,11 +104,11 @@ JsonScanner::scan()
   case '7':
   case '8':
   case '9':
-    mCurString.put_char(c);
+    mCurString += static_cast<char>(c);
     goto ST_NUM1;
 
   case '.':
-    mCurString.put_char(c);
+    mCurString += static_cast<char>(c);
     goto ST_NUM_DOT;
 
   case 't':
@@ -151,7 +151,7 @@ JsonScanner::scan()
   c = get();
   switch ( c ) {
   case '0':
-    mCurString.put_char(c);
+    mCurString += static_cast<char>(c);
     goto ST_NUM0;
 
   case '1':
@@ -163,7 +163,7 @@ JsonScanner::scan()
   case '7':
   case '8':
   case '9':
-    mCurString.put_char(c);
+    mCurString += static_cast<char>(c);
     goto ST_NUM1;
 
   default:
@@ -175,13 +175,13 @@ JsonScanner::scan()
   switch ( c ) {
   case '.':
     accept();
-    mCurString.put_char(c);
+    mCurString += static_cast<char>(c);
     goto ST_NUM_DOT;
 
   case 'e':
   case 'E':
     accept();
-    mCurString.put_char(c);
+    mCurString += static_cast<char>(c);
     goto ST_NUM_EXP1;
 
   default:
@@ -202,18 +202,18 @@ JsonScanner::scan()
   case '8':
   case '9':
     accept();
-    mCurString.put_char(c);
+    mCurString += static_cast<char>(c);
     goto ST_NUM1;
 
   case '.':
     accept();
-    mCurString.put_char(c);
+    mCurString += static_cast<char>(c);
     goto ST_NUM_DOT;
 
   case 'e':
   case 'E':
     accept();
-    mCurString.put_char(c);
+    mCurString += static_cast<char>(c);
     goto ST_NUM_EXP1;
 
   default:
@@ -234,13 +234,13 @@ JsonScanner::scan()
   case '8':
   case '9':
     accept();
-    mCurString.put_char(c);
+    mCurString += static_cast<char>(c);
     goto ST_NUM_DOT;
 
   case 'e':
   case 'E':
     accept();
-    mCurString.put_char(c);
+    mCurString += static_cast<char>(c);
     goto ST_NUM_EXP1;
 
   default:
@@ -261,13 +261,13 @@ JsonScanner::scan()
   case '8':
   case '9':
     accept();
-    mCurString.put_char(c);
+    mCurString += static_cast<char>(c);
     goto ST_NUM_DOT;
 
   case '-':
   case '+':
     accept();
-    mCurString.put_char(c);
+    mCurString += static_cast<char>(c);
     goto ST_NUM_EXP2;
   }
 
@@ -285,7 +285,7 @@ JsonScanner::scan()
   case '8':
   case '9':
     accept();
-    mCurString.put_char(c);
+    mCurString += static_cast<char>(c);
     goto ST_NUM_EXP2;
 
   default:
@@ -315,7 +315,7 @@ JsonScanner::scan()
   else if ( !isprint(c) ) {
     goto ST_ERROR;
   }
-  mCurString.put_char(c);
+  mCurString += static_cast<char>(c);
   goto ST_DQ;
 
  ST_UHEX4: // 4桁のHEXコードを読み込み，unicode と解釈する．
@@ -332,22 +332,16 @@ JsonScanner::scan()
     std::uint32_t code = strtol(buff, nullptr, 16);
     // code を unicode とみなして UTF-8 に符号化する．
     if ( code <= 0x007F ) {
-      char c = static_cast<char>(code);
-      mCurString.put_char(c);
+      mCurString += static_cast<char>(code);
     }
     else if ( code <= 0x07FF ) {
-      char l = static_cast<char>(code & 0x3F) | 0x80;
-      char h = static_cast<char>((code >> 6) & 0x1F) | 0xC0;
-      mCurString.put_char(h);
-      mCurString.put_char(l);
+      mCurString += static_cast<char>((code >> 6) & 0x1F) | 0xC0;
+      mCurString += static_cast<char>(code & 0x3F) | 0x80;
     }
     else { // ここでは 0x10000 以上のコードはない．
-      char l = static_cast<char>(code & 0x3F) | 0x80;
-      char m = static_cast<char>((code >> 6) & 0x3F) | 0x80;
-      char h = static_cast<char>((code >> 12) & 0x0F) | 0xE0;
-      mCurString.put_char(h);
-      mCurString.put_char(m);
-      mCurString.put_char(l);
+      mCurString += static_cast<char>((code >> 12) & 0x0F) | 0xE0;
+      mCurString += static_cast<char>((code >> 6) & 0x3F) | 0x80;
+      mCurString += static_cast<char>(code & 0x3F) | 0x80;
     }
   }
   goto ST_DQ;

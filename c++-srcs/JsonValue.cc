@@ -11,7 +11,7 @@
 #include "JsonParser.h"
 
 
-BEGIN_NAMESPACE_YM
+BEGIN_NAMESPACE_YM_JSON
 
 // @brief 空のコンストラクタ
 JsonValue::JsonValue()
@@ -250,6 +250,16 @@ JsonValue::emplace(
   mPtr->emplace(key, value);
 }
 
+// @brief 配列型の要素を追加する．
+void
+JsonValue::append(
+  const JsonValue& value
+)
+{
+  _check_array();
+  mPtr->append(value);
+}
+
 // @brief 読み込む．
 JsonValue
 JsonValue::read(
@@ -304,6 +314,34 @@ JsonValue::operator==(
 ) const
 {
   return mPtr->is_eq(right.mPtr.get());
+}
+
+END_NAMESPACE_YM_JSON
+
+BEGIN_NAMESPACE_YM
+
+// @brief ストリーム入力演算子
+istream&
+operator>>(
+  istream& s,
+  JsonValue& json_obj
+)
+{
+  nsJson::JsonParser parser;
+  auto obj = parser.read(s, FileInfo{});
+  json_obj = JsonValue{obj};
+  return s;
+}
+
+// @brief ストリーム出力演算子
+ostream&
+operator<<(
+  ostream& s,               ///< [in] 出力ストリーム
+  const JsonValue& json_obj ///< [in] 体操のオブジェクト
+)
+{
+  json_obj.write(s);
+  return s;
 }
 
 END_NAMESPACE_YM

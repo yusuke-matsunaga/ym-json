@@ -10,7 +10,6 @@
 
 #include "ym/json.h"
 #include "ym/Scanner.h"
-#include "ym/StrBuff.h"
 
 
 BEGIN_NAMESPACE_YM_JSON
@@ -113,7 +112,7 @@ private:
   //////////////////////////////////////////////////////////////////////
 
   // 文字列バッファ
-  StrBuff mCurString;
+  string mCurString;
 
   // ファイル上の位置
   FileRegion mCurLoc;

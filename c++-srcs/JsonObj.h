@@ -147,6 +147,13 @@ public:
     const JsonValue& value
   );
 
+  /// @brief 要素を追加する．
+  virtual
+  void
+  append(
+    const JsonValue& value
+  );
+
   /// @brief 内容を書き出す．
   virtual
   void
@@ -307,6 +314,12 @@ public:
   get_value(
     SizeType pos ///< [in] 位置番号 ( 0 <= pos < array_size() )
   ) const override;
+
+  /// @brief 要素を追加する．
+  void
+  append(
+    const JsonValue& value
+  ) override;
 
   /// @brief 内容を書き出す．
   void

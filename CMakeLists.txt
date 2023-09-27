@@ -28,8 +28,6 @@
 # ===================================================================
 
 include_directories (
-  ${PROJECT_BINARY_DIR}/include
-  ${PROJECT_SOURCE_DIR}/ym-common/include
   include
   )
 

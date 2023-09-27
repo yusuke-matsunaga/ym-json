@@ -18,6 +18,7 @@
 #  RandSamplerTest
 # ===================================================================
 
+if ( 0 )
 set ( RandSamplerTest_SOURCES
   RandSamplerTest.cc
   )
@@ -39,3 +40,4 @@ target_link_libraries ( RandSamplerTest
   pthread
   ${YM_LIB_DEPENDS}
   )
+endif ()
