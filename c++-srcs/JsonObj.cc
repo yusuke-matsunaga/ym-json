@@ -32,20 +32,6 @@ END_NONAMESPACE
 // クラス JsonObj
 //////////////////////////////////////////////////////////////////////
 
-// @brief オブジェクト型の時 true を返す．
-bool
-JsonObj::is_object() const
-{
-  return false;
-}
-
-// @brief 配列型の時 true を返す．
-bool
-JsonObj::is_array() const
-{
-  return false;
-}
-
 // @brief 文字列型の時 true を返す．
 bool
 JsonObj::is_string() const
@@ -70,6 +56,20 @@ JsonObj::is_float() const
 // @brief ブール型の時 true を返す．
 bool
 JsonObj::is_bool() const
+{
+  return false;
+}
+
+// @brief オブジェクト型の時 true を返す．
+bool
+JsonObj::is_object() const
+{
+  return false;
+}
+
+// @brief 配列型の時 true を返す．
+bool
+JsonObj::is_array() const
 {
   return false;
 }

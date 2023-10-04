@@ -31,16 +31,6 @@ public:
   // 外部インターフェイス
   //////////////////////////////////////////////////////////////////////
 
-  /// @brief オブジェクト型の時 true を返す．
-  virtual
-  bool
-  is_object() const;
-
-  /// @brief 配列型の時 true を返す．
-  virtual
-  bool
-  is_array() const;
-
   /// @brief 文字列型の時 true を返す．
   virtual
   bool
@@ -60,6 +50,16 @@ public:
   virtual
   bool
   is_bool() const;
+
+  /// @brief オブジェクト型の時 true を返す．
+  virtual
+  bool
+  is_object() const;
+
+  /// @brief 配列型の時 true を返す．
+  virtual
+  bool
+  is_array() const;
 
   /// @brief オブジェクトがキーを持つか調べる．
   ///

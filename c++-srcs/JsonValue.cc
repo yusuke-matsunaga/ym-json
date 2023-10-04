@@ -79,24 +79,11 @@ JsonValue::~JsonValue()
 {
 }
 
-// @brief オブジェクト型の時 true を返す．
+// @brief null型の時 true を返す．
 bool
-JsonValue::is_object() const
+JsonValue::is_null() const
 {
-  if ( is_null() ) {
-    return false;
-  }
-  return mPtr->is_object();
-}
-
-// @brief 配列型の時 true を返す．
-bool
-JsonValue::is_array() const
-{
-  if ( is_null() ) {
-    return false;
-  }
-  return mPtr->is_array();
+  return mPtr.get() == nullptr;
 }
 
 // @brief 文字列型の時 true を返す．
@@ -113,7 +100,10 @@ JsonValue::is_string() const
 bool
 JsonValue::is_number() const
 {
-  return is_int() || is_float();
+  if ( is_null() ) {
+    return false;
+  }
+  return mPtr->is_int() || mPtr->is_float();
 }
 
 // @brief 整数型の時 true を返す．
@@ -146,11 +136,24 @@ JsonValue::is_bool() const
   return mPtr->is_bool();
 }
 
-// @brief null型の時 true を返す．
+// @brief オブジェクト型の時 true を返す．
 bool
-JsonValue::is_null() const
+JsonValue::is_object() const
 {
-  return mPtr.get() == nullptr;
+  if ( is_null() ) {
+    return false;
+  }
+  return mPtr->is_object();
+}
+
+// @brief 配列型の時 true を返す．
+bool
+JsonValue::is_array() const
+{
+  if ( is_null() ) {
+    return false;
+  }
+  return mPtr->is_array();
 }
 
 // @brief オブジェクトがキーを持つか調べる．

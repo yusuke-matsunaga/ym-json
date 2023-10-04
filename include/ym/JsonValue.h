@@ -18,6 +18,15 @@ class JsonObj;
 //////////////////////////////////////////////////////////////////////
 /// @class JsonValue JsonValue.h "ym/JsonValue.h"
 /// @brief json オブジェクトを表すクラス
+///
+/// 以下のタイプを持つ．
+/// - null
+/// - 文字列 (string)
+/// - 整数 (int)
+/// - 浮動小数点数 (double)
+/// - ブール (bool)
+/// - 配列 (vector<JsonValue>)
+/// - オブジェクト (unordered_map<string, JsonValue>)
 //////////////////////////////////////////////////////////////////////
 class JsonValue
 {
@@ -95,19 +104,17 @@ public:
   // 外部インターフェイス
   //////////////////////////////////////////////////////////////////////
 
-  /// @brief オブジェクト型の時 true を返す．
+  /// @brief null 型の時 true を返す．
   bool
-  is_object() const;
-
-  /// @brief 配列型の時 true を返す．
-  bool
-  is_array() const;
+  is_null() const;
 
   /// @brief 文字列型の時 true を返す．
   bool
   is_string() const;
 
   /// @brief 数値型の時 true を返す．
+  ///
+  /// is_int() か is_float() の時 true となる．
   bool
   is_number() const;
 
@@ -123,9 +130,13 @@ public:
   bool
   is_bool() const;
 
-  /// @brief null型の時 true を返す．
+  /// @brief オブジェクト型の時 true を返す．
   bool
-  is_null() const;
+  is_object() const;
+
+  /// @brief 配列型の時 true を返す．
+  bool
+  is_array() const;
 
   /// @brief オブジェクトがキーを持つか調べる．
   ///
