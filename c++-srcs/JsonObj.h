@@ -9,6 +9,7 @@
 /// All rights reserved.
 
 #include "ym/json.h"
+#include "ym/JsonValue.h"
 
 
 BEGIN_NAMESPACE_YM_JSON
