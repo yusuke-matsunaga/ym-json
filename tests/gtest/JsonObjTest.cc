@@ -87,7 +87,6 @@ TEST(JsonObjTest, bool)
   EXPECT_EQ( value, json_obj->get_bool() );
 }
 
-#if 0
 TEST(JsonObjTest, array1)
 {
   string value1 = "xyz";
@@ -114,18 +113,20 @@ TEST(JsonObjTest, array1)
   EXPECT_EQ( json2, json_obj->get_value(1) );
   EXPECT_EQ( json3, json_obj->get_value(2) );
 }
-#endif
 
 TEST(JsonObjTest, array2)
 {
   string value1 = "xyz";
+  JsonValue json1{value1};
   int value2 = 2;
+  JsonValue json2{value2};
   float value3 = 0.99;
+  JsonValue json3{value3};
 
   auto json_obj = new JsonArray{vector<JsonValue>{}};
-  json_obj->append(value1);
-  json_obj->append(value2);
-  json_obj->append(value3);
+  json_obj->append(json1);
+  json_obj->append(json2);
+  json_obj->append(json3);
 
   EXPECT_FALSE( json_obj->is_string() );
   EXPECT_FALSE( json_obj->is_int() );
@@ -135,9 +136,9 @@ TEST(JsonObjTest, array2)
   EXPECT_TRUE( json_obj->is_array() );
 
   EXPECT_EQ( 3, json_obj->array_size() );
-  EXPECT_EQ( JsonValue{value1}, json_obj->get_value(0) );
-  EXPECT_EQ( JsonValue{value2}, json_obj->get_value(1) );
-  EXPECT_EQ( JsonValue{value3}, json_obj->get_value(2) );
+  EXPECT_EQ( json1, json_obj->get_value(0) );
+  EXPECT_EQ( json2, json_obj->get_value(1) );
+  EXPECT_EQ( json3, json_obj->get_value(2) );
 }
 
 TEST(JsonObjTest, object1)
@@ -185,9 +186,9 @@ TEST(JsonObjTest, object2)
   JsonValue json3{value3};
 
   auto json_obj = new JsonDict{unordered_map<string, JsonValue>{}};
-  json_obj->emplace("key1", value1);
-  json_obj->emplace("key2", value2);
-  json_obj->emplace("key3", value3);
+  json_obj->emplace("key1", json1);
+  json_obj->emplace("key2", json2);
+  json_obj->emplace("key3", json3);
 
   EXPECT_FALSE( json_obj->is_string() );
   EXPECT_FALSE( json_obj->is_int() );

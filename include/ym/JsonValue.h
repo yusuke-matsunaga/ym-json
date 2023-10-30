@@ -40,36 +40,43 @@ public:
   JsonValue();
 
   /// @brief 文字列型のコンストラクタ
+  explicit
   JsonValue(
     const char* value ///< [in] 値
   );
 
   /// @brief 文字列型のコンストラクタ
+  explicit
   JsonValue(
     const string& value ///< [in] 値
   );
 
   /// @brief 整数型のコンストラクタ
+  explicit
   JsonValue(
     int value ///< [in] 値
   );
 
   /// @brief 浮動小数点型のコンストラクタ
+  explicit
   JsonValue(
     double value ///< [in] 値
   );
 
   /// @brief ブール型のコンストラクタ
+  explicit
   JsonValue(
     bool value ///< [in] 値
   );
 
   /// @brief 配列型のコンストラクタ
+  explicit
   JsonValue(
     const vector<JsonValue>& value ///< [in] 値
   );
 
   /// @brief オブジェクト型のコンストラクタ
+  explicit
   JsonValue(
     const unordered_map<string, JsonValue>& value ///< [in] 値
   );

@@ -334,7 +334,7 @@ JsonDict::is_eq(
 // @brief コンストラクタ
 JsonArray::JsonArray(
   const vector<JsonValue>& array
-) : mArray(array)
+) : mArray{array}
 {
 }
 
