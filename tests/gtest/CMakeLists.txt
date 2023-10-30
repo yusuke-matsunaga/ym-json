@@ -22,6 +22,11 @@ include_directories (
 #  テスト用のターゲットの設定
 # ===================================================================
 
+ym_add_gtest ( json_JsonValueTest
+  JsonValueTest.cc
+  $<TARGET_OBJECTS:ym_json_obj_d>
+  )
+
 ym_add_gtest ( json_JsonScannerTest
   JsonScannerTest.cc
   $<TARGET_OBJECTS:ym_json_obj_d>
