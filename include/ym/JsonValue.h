@@ -39,6 +39,14 @@ public:
   /// null 型の値となる．
   JsonValue();
 
+  /// @brief 明示的に null 型のオブジェクトを作るクラスメソッド
+  static
+  JsonValue
+  null()
+  {
+    return JsonValue{};
+  }
+
   /// @brief 文字列型のコンストラクタ
   explicit
   JsonValue(
@@ -80,22 +88,6 @@ public:
   JsonValue(
     const unordered_map<string, JsonValue>& value ///< [in] 値
   );
-
-  /// @brief オブジェクト型のインスタンスを作る関数
-  static
-  JsonValue
-  Object()
-  {
-    return JsonValue{unordered_map<string, JsonValue>{}};
-  }
-
-  /// @brief 配列型のインスタンスを作る関数
-  static
-  JsonValue
-  Array()
-  {
-    return JsonValue{vector<JsonValue>{}};
-  }
 
   /// @brief 値を指定したコンストラクタ
   JsonValue(
@@ -237,210 +229,6 @@ public:
   bool
   get_bool() const;
 
-  /// @brief オブジェクト型の要素を追加する．
-  ///
-  /// - オブジェクト型でない場合は無効
-  void
-  emplace(
-    const string& key,     ///< [in] キー
-    const JsonValue& value ///< [in] 値
-  );
-
-  /// @brief オブジェクト型の要素を追加する．
-  ///
-  /// - オブジェクト型でない場合は無効
-  void
-  emplace(
-    const char* key,       ///< [in] キー
-    const JsonValue& value ///< [in] 値
-  )
-  {
-    emplace(string{key}, value);
-  }
-
-  /// @brief オブジェクト型の要素を追加する．
-  ///
-  /// - オブジェクト型でない場合は無効
-  void
-  emplace(
-    const string& key,     ///< [in] キー
-    const string& value    ///< [in] 値
-  )
-  {
-    emplace(key, JsonValue{value});
-  }
-
-  /// @brief オブジェクト型の要素を追加する．
-  ///
-  /// - オブジェクト型でない場合は無効
-  void
-  emplace(
-    const char* key,     ///< [in] キー
-    const string& value  ///< [in] 値
-  )
-  {
-    emplace(key, JsonValue{value});
-  }
-
-  /// @brief オブジェクト型の要素を追加する．
-  ///
-  /// - オブジェクト型でない場合は無効
-  void
-  emplace(
-    const string& key,   ///< [in] キー
-    const char* value    ///< [in] 値
-  )
-  {
-    emplace(key, JsonValue{value});
-  }
-
-  /// @brief オブジェクト型の要素を追加する．
-  ///
-  /// - オブジェクト型でない場合は無効
-  void
-  emplace(
-    const char* key,   ///< [in] キー
-    const char* value  ///< [in] 値
-  )
-  {
-    emplace(key, JsonValue{value});
-  }
-
-  /// @brief オブジェクト型の要素を追加する．
-  ///
-  /// - オブジェクト型でない場合は無効
-  void
-  emplace(
-    const string& key,  ///< [in] キー
-    int value           ///< [in] 値
-  )
-  {
-    emplace(key, JsonValue{value});
-  }
-
-  /// @brief オブジェクト型の要素を追加する．
-  ///
-  /// - オブジェクト型でない場合は無効
-  void
-  emplace(
-    const char* key,  ///< [in] キー
-    int value         ///< [in] 値
-  )
-  {
-    emplace(key, JsonValue{value});
-  }
-
-  /// @brief オブジェクト型の要素を追加する．
-  ///
-  /// - オブジェクト型でない場合は無効
-  void
-  emplace(
-    const string& key,  ///< [in] キー
-    float value         ///< [in] 値
-  )
-  {
-    emplace(key, JsonValue{value});
-  }
-
-  /// @brief オブジェクト型の要素を追加する．
-  ///
-  /// - オブジェクト型でない場合は無効
-  void
-  emplace(
-    const char* key,  ///< [in] キー
-    float value       ///< [in] 値
-  )
-  {
-    emplace(key, JsonValue{value});
-  }
-
-  /// @brief オブジェクト型の要素を追加する．
-  ///
-  /// - オブジェクト型でない場合は無効
-  void
-  emplace(
-    const string& key,  ///< [in] キー
-    bool value          ///< [in] 値
-  )
-  {
-    emplace(key, JsonValue{value});
-  }
-
-  /// @brief オブジェクト型の要素を追加する．
-  ///
-  /// - オブジェクト型でない場合は無効
-  void
-  emplace(
-    const char* key,  ///< [in] キー
-    bool value        ///< [in] 値
-  )
-  {
-    emplace(key, JsonValue{value});
-  }
-
-  /// @brief 配列型の要素を追加する．
-  ///
-  /// - 配列型でない場合は無効
-  void
-  append(
-    const JsonValue& value ///< [in] 値
-  );
-
-  /// @brief 配列型の要素を追加する．
-  ///
-  /// - 配列型でない場合は無効
-  void
-  append(
-    const string& value ///< [in] 値
-  )
-  {
-    append(JsonValue{value});
-  }
-
-  /// @brief 配列型の要素を追加する．
-  ///
-  /// - 配列型でない場合は無効
-  void
-  append(
-    const char* value ///< [in] 値
-  )
-  {
-    append(JsonValue{value});
-  }
-
-  /// @brief 配列型の要素を追加する．
-  ///
-  /// - 配列型でない場合は無効
-  void
-  append(
-    int value ///< [in] 値
-  )
-  {
-    append(JsonValue{value});
-  }
-
-  /// @brief 配列型の要素を追加する．
-  ///
-  /// - 配列型でない場合は無効
-  void
-  append(
-    float value ///< [in] 値
-  )
-  {
-    append(JsonValue{value});
-  }
-
-  /// @brief 配列型の要素を追加する．
-  ///
-  /// - 配列型でない場合は無効
-  void
-  append(
-    bool value ///< [in] 値
-  )
-  {
-    append(JsonValue{value});
-  }
-
   /// @brief 読み込む．
   /// @return 結果を格納したオブジェクトを返す．
   static
@@ -457,12 +245,21 @@ public:
     const string& json_str ///< [in] JSON文字列
   );
 
+  /// @brief 内容を JSON 文字列に変換する．
+  string
+  to_json(
+    bool indent = false ///< [in] インデントフラグ
+  ) const;
+
   /// @brief 内容を書き出す．
   void
   write(
     ostream& s,         ///< [in] 出力ストリーム
     bool indent = false ///< [in] インデントフラグ
-  ) const;
+  ) const
+  {
+    s << to_json(indent);
+  }
 
   /// @brief 等価比較演算子
   bool

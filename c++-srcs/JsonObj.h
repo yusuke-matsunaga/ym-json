@@ -155,11 +155,10 @@ public:
     const JsonValue& value
   );
 
-  /// @brief 内容を書き出す．
+  /// @brief 内容を JSON 文字列に変換する．
   virtual
-  void
-  write(
-    ostream& s,
+  string
+  to_json(
     int indent
   ) const = 0;
 
@@ -249,10 +248,9 @@ public:
     const JsonValue& value
   ) override;
 
-  /// @brief 内容を書き出す．
-  void
-  write(
-    ostream& s,
+  /// @brief 内容を JSON 文字列に変換する．
+  string
+  to_json(
     int indent
   ) const override;
 
@@ -322,10 +320,9 @@ public:
     const JsonValue& value
   ) override;
 
-  /// @brief 内容を書き出す．
-  void
-  write(
-    ostream& s,
+  /// @brief 内容を JSON 文字列に変換する．
+  string
+  to_json(
     int indent
   ) const override;
 
@@ -380,10 +377,9 @@ public:
   string
   get_string() const override;
 
-  /// @brief 内容を書き出す．
-  void
-  write(
-    ostream& s,
+  /// @brief 内容を JSON 文字列に変換する．
+  string
+  to_json(
     int indent
   ) const override;
 
@@ -438,10 +434,9 @@ public:
   int
   get_int() const override;
 
-  /// @brief 内容を書き出す．
-  void
-  write(
-    ostream& s,
+  /// @brief 内容を JSON 文字列に変換する．
+  string
+  to_json(
     int indent
   ) const override;
 
@@ -496,10 +491,9 @@ public:
   double
   get_float() const override;
 
-  /// @brief 内容を書き出す．
-  void
-  write(
-    ostream& s,
+  /// @brief 内容を JSON 文字列に変換する．
+  string
+  to_json(
     int indent
   ) const override;
 
@@ -554,10 +548,9 @@ public:
   bool
   get_bool() const override;
 
-  /// @brief 内容を書き出す．
-  void
-  write(
-    ostream& s,
+  /// @brief 内容を JSON 文字列に変換する．
+  string
+  to_json(
     int indent
   ) const override;
 

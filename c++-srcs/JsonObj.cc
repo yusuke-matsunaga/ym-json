@@ -15,6 +15,46 @@ BEGIN_NAMESPACE_YM_JSON
 BEGIN_NONAMESPACE
 
 string
+escaped_string(
+  const string& src_string
+)
+{
+  bool has_dq = false;
+  bool has_sq = false;
+  for ( auto c: src_string ) {
+    if ( c == '"' ) {
+      has_dq = true;
+    }
+    if ( c == '\'' ) {
+      has_sq = true;
+    }
+  }
+  string ans;
+  if ( !has_dq ) {
+    ans += '"';
+    ans += src_string;
+    ans += '"';
+  }
+  else if ( !has_sq ) {
+    ans += "'";
+    ans += src_string;
+    ans += "'";
+  }
+  else {
+    // 文字列中の " をエスケープする．
+    ans += '"';
+    for ( auto c: src_string ) {
+      if ( c == '"' ) {
+	ans += '\\';
+      }
+      ans += c;
+    }
+    ans += '"';
+  }
+  return ans;
+}
+
+string
 tab(
   SizeType n
 )
@@ -271,18 +311,18 @@ JsonDict::emplace(
   mDict.emplace(key, value);
 }
 
-// @brief 内容を書き出す．
-void
-JsonDict::write(
-  ostream& s,
+// @brief 内容を JSON 文字列に変換する．
+string
+JsonDict::to_json(
   int indent
 ) const
 {
   bool first = true;
   int indent1 = indent;
-  s << "{";
+  string ans;
+  ans = "{";
   if ( indent >= 0 ) {
-    s << endl;
+    ans += '\n';
     ++ indent1;
   }
   for ( auto& p: item_list() ) {
@@ -290,27 +330,29 @@ JsonDict::write(
       first = false;
     }
     else {
-      s << ",";
+      ans += ",";
       if ( indent >= 0 ) {
-	s << endl;
+	ans += '\n';
       }
       else {
-	s << " ";
+	ans += " ";
       }
     }
     auto key = p.first;
     auto value = p.second;
     if ( indent >= 0 ) {
-      s << tab(indent1);
+      ans += tab(indent1);
     }
-    s << "\"" << key << "\": ";
-    obj_ptr(value)->write(s, indent1);
+    ans += escaped_string(key);
+    ans += ": ";
+    ans += obj_ptr(value)->to_json(indent1);
   }
   if ( indent >= 0 ) {
-    s << endl;
-    s << tab(indent);
+    ans += '\n';
+    ans += tab(indent);
   }
-  s << "}";
+  ans += "}";
+  return ans;
 }
 
 // @brief 等価比較
@@ -376,16 +418,16 @@ JsonArray::append(
   mArray.push_back(value);
 }
 
-// @brief 内容を書き出す．
-void
-JsonArray::write(
-  ostream& s,
+// @brief 内容を JSON 文字列に変換する．
+string
+JsonArray::to_json(
   int indent
 ) const
 {
-  s << "[";
+  string ans;
+  ans = "[";
   if ( indent >= 0 ) {
-    s << endl;
+    ans += '\n';
   }
   bool first = true;
   int indent1 = indent;
@@ -397,21 +439,22 @@ JsonArray::write(
       first = false;
     }
     else {
-      s << ",";
+      ans += ",";
       if ( indent >= 0 ) {
-	s << endl;
+	ans += '\n';
       }
     }
     if ( indent >= 0 ) {
-      s << tab(indent1);
+      ans += tab(indent1);
     }
-    obj_ptr(value)->write(s, indent1);
+    ans += obj_ptr(value)->to_json(indent1);
   }
   if ( indent >= 0 ) {
-    s << endl
-      << tab(indent);
+    ans += '\n';
+    ans += tab(indent);
   }
-  s << "]";
+  ans += "]";
+  return ans;
 }
 
 // @brief 等価比較
@@ -458,14 +501,13 @@ JsonString::get_string() const
   return mValue;
 }
 
-// @brief 内容を書き出す．
-void
-JsonString::write(
-  ostream& s,
+// @brief 内容を JSON 文字列に変換する．
+string
+JsonString::to_json(
   int indent
 ) const
 {
-  s << get_string();
+  return escaped_string(get_string());
 }
 
 // @brief 等価比較
@@ -511,14 +553,15 @@ JsonInt::get_int() const
   return mValue;
 }
 
-// @brief 内容を書き出す．
-void
-JsonInt::write(
-  ostream& s,
+// @brief 内容を JSON 文字列に変換する．
+string
+JsonInt::to_json(
   int indent
 ) const
 {
-  s << get_int();
+  ostringstream buf;
+  buf << get_int();
+  return buf.str();
 }
 
 // @brief 等価比較
@@ -564,14 +607,15 @@ JsonFloat::get_float() const
   return mValue;
 }
 
-// @brief 内容を書き出す．
-void
-JsonFloat::write(
-  ostream& s,
+// @brief 内容を JSON 文字列に変換する．
+string
+JsonFloat::to_json(
   int indent
 ) const
 {
-  s << get_float();
+  ostringstream buf;
+  buf << get_float();
+  return buf.str();
 }
 
 // @brief 等価比較
@@ -617,18 +661,17 @@ JsonBool::get_bool() const
   return mValue;
 }
 
-// @brief 内容を書き出す．
-void
-JsonBool::write(
-  ostream& s,
+// @brief 内容を JSON 文字列に変換する．
+string
+JsonBool::to_json(
   int indent
 ) const
 {
   if ( is_bool() ) {
-    s << "true";
+    return "true";
   }
   else {
-    s << "false";
+    return "false";
   }
 }
 

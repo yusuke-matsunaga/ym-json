@@ -173,13 +173,17 @@ TEST(JsonTest, parse)
   exp_str += "        \"sub_key1\": 0,\n";
   exp_str += "        \"sub_key2\": 1\n";
   exp_str += "    },\n";
-  exp_str += "    \"str_key\": abcd\n";
+  exp_str += "    \"str_key\": \"abcd\"\n";
   exp_str += "}\n";
 
   ostringstream os;
   value.write(os, true);
 
   EXPECT_EQ( exp_str, os.str() );
+
+  auto tmp_str = value.to_json();
+  auto parsed_value = JsonValue::parse(tmp_str);
+  EXPECT_EQ( parsed_value, value );
 }
 
 END_NAMESPACE_YM

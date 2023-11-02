@@ -40,6 +40,7 @@ include_directories (
 # サブディレクトリの設定
 # ===================================================================
 
+add_subdirectory ( py_ymjson )
 add_subdirectory ( tests )
 
 

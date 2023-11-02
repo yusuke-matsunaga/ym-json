@@ -89,8 +89,11 @@ JsonScanner::scan()
   case ':':
     return JsonToken::Colon;
 
-  case '\"':
+  case '"':
     goto ST_DQ;
+
+  case '\'':
+    goto ST_SQ;
 
   case '-':
     mCurString += static_cast<char>(c);
@@ -306,6 +309,7 @@ JsonScanner::scan()
     c = get();
     switch ( c ) {
     case '\"': c = '\"'; break;
+    case '\'': c = '\''; break;
     case '\\': c = '\\'; break;
     case '/': c = '/'; break;
     case 'b': c = '\b'; break;
@@ -322,6 +326,33 @@ JsonScanner::scan()
   }
   mCurString += static_cast<char>(c);
   goto ST_DQ;
+
+ ST_SQ: // 次の '\'' までを文字列だと思う．
+  c = get();
+  if ( c == '\'' ) {
+    return JsonToken::String;
+  }
+  if ( c == '\\' ) {
+    c = get();
+    switch ( c ) {
+    case '\"': c = '\"'; break;
+    case '\'': c = '\''; break;
+    case '\\': c = '\\'; break;
+    case '/': c = '/'; break;
+    case 'b': c = '\b'; break;
+    case 'f': c = '\f'; break;
+    case 'n': c = '\n'; break;
+    case 'r': c = '\r'; break;
+    case 't': c = '\t'; break;
+    case 'u': goto ST_UHEX4; break;
+    default: goto ST_ERROR;
+    }
+  }
+  else if ( !isprint(c) ) {
+    goto ST_ERROR;
+  }
+  mCurString += static_cast<char>(c);
+  goto ST_SQ;
 
  ST_UHEX4: // 4桁のHEXコードを読み込み，unicode と解釈する．
   {

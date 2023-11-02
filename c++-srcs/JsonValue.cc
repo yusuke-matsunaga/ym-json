@@ -242,27 +242,6 @@ JsonValue::get_bool() const
   return mPtr->get_bool();
 }
 
-// @brief オブジェクト型の要素を追加する．
-void
-JsonValue::emplace(
-  const string& key,
-  const JsonValue& value
-)
-{
-  _check_object();
-  mPtr->emplace(key, value);
-}
-
-// @brief 配列型の要素を追加する．
-void
-JsonValue::append(
-  const JsonValue& value
-)
-{
-  _check_array();
-  mPtr->append(value);
-}
-
 // @brief 読み込む．
 JsonValue
 JsonValue::read(
@@ -293,21 +272,24 @@ JsonValue::parse(
   return JsonValue{obj};
 }
 
-// @brief 内容を書き出す．
-void
-JsonValue::write(
-  ostream& s,
+// @brief 内容を JSON 文字列に変換する．
+string
+JsonValue::to_json(
   bool indent
 ) const
 {
+  if ( is_null() ) {
+    return string{"null"};
+  }
   int indent_val = -1;
   if ( indent ) {
     indent_val = 0;
   }
-  mPtr->write(s, indent_val);
+  auto ans = mPtr->to_json(indent_val);
   if ( indent ) {
-    s << endl;
+    ans += '\n';
   }
+  return ans;
 }
 
 // @brief 等価比較演算子
