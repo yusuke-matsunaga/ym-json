@@ -27,6 +27,11 @@ class JsonObj;
 /// - ブール (bool)
 /// - 配列 (vector<JsonValue>)
 /// - オブジェクト (unordered_map<string, JsonValue>)
+///
+/// 実装としては実体は JsonObj (の派生クラス) が表す．
+/// JsonValue は JsonObj の shared_ptr<> のみを持つ．
+/// JsonValue の公開メソッドはすべて const なので
+/// 共有していても問題はない．
 //////////////////////////////////////////////////////////////////////
 class JsonValue
 {
