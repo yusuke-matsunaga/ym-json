@@ -553,8 +553,16 @@ JsonValue_subscript(
     }
     auto key2 = PyUnicode_EncodeLocale(key, nullptr);
     string key_str{PyBytes_AsString(key2)};
-    auto ans = val.at(key_str);
-    return PyJsonValue::ToPyObject(ans);
+    try {
+      auto ans = val.at(key_str);
+      return PyJsonValue::ToPyObject(ans);
+    }
+    catch ( std::invalid_argument ) {
+      ostringstream buf;
+      buf << key_str << ": invalid key";
+      PyErr_SetString(PyExc_ValueError, buf.str().c_str());
+      return nullptr;
+    }
   }
   if ( PyLong_Check(key) ) {
     if ( !val.is_array() ) {
@@ -563,8 +571,14 @@ JsonValue_subscript(
     }
     auto index = PyLong_AsLong(key);
     int index1 = ( index >= 0 ) ? index : val.size() + index;
-    auto ans = val.at(index1);
-    return PyJsonValue::ToPyObject(ans);
+    try {
+      auto ans = val.at(index1);
+      return PyJsonValue::ToPyObject(ans);
+    }
+    catch ( std::out_of_range err ) {
+      PyErr_SetString(PyExc_ValueError, "index is out-of-range");
+      return nullptr;
+    }
   }
   PyErr_SetString(PyExc_TypeError, "Not a container");
   return nullptr;

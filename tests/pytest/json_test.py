@@ -25,6 +25,8 @@ def test_null():
     assert not val.is_object()
     assert not val.is_array()
     with pytest.raises(TypeError) as e:
+        _ = len(val)
+    with pytest.raises(TypeError) as e:
         _ = val.has_key("abc")
     with pytest.raises(TypeError) as e:
         _ = val.key_list
@@ -32,8 +34,6 @@ def test_null():
         _ = val.item_list
     with pytest.raises(TypeError) as e:
         _ = val["abc"]
-    with pytest.raises(TypeError) as e:
-        _ = len(val)
     with pytest.raises(TypeError) as e:
         _ = val[0]
     with pytest.raises(TypeError) as e:
@@ -65,6 +65,8 @@ def test_string():
     assert not val.is_object()
     assert not val.is_array()
     with pytest.raises(TypeError) as e:
+        _ = len(val)
+    with pytest.raises(TypeError) as e:
         _ = val.has_key("abc")
     with pytest.raises(TypeError) as e:
         _ = val.key_list
@@ -72,8 +74,6 @@ def test_string():
         _ = val.item_list
     with pytest.raises(TypeError) as e:
         _ = val["abc"]
-    with pytest.raises(TypeError) as e:
-        _ = len(val)
     with pytest.raises(TypeError) as e:
         _ = val[0]
     assert str_val == val.get_string()
@@ -97,8 +97,25 @@ def test_int():
     assert not val.is_bool()
     assert not val.is_object()
     assert not val.is_array()
-
+    with pytest.raises(TypeError) as e:
+        _ = len(val)
+    with pytest.raises(TypeError) as e:
+        _ = val.has_key("abc")
+    with pytest.raises(TypeError) as e:
+        _ = val.key_list
+    with pytest.raises(TypeError) as e:
+        _ = val.item_list
+    with pytest.raises(TypeError) as e:
+        _ = val["abc"]
+    with pytest.raises(TypeError) as e:
+        _ = val[0]
+    with pytest.raises(TypeError) as e:
+        _ = val.get_string()
     assert int_val == val.get_int()
+    with pytest.raises(TypeError) as e:
+        _ = val.get_float()
+    with pytest.raises(TypeError) as e:
+        _ = val.get_bool()
 
 def test_float():
     float_val = 1.2345
@@ -112,8 +129,25 @@ def test_float():
     assert not val.is_bool()
     assert not val.is_object()
     assert not val.is_array()
-
+    with pytest.raises(TypeError) as e:
+        _ = len(val)
+    with pytest.raises(TypeError) as e:
+        _ = val.has_key("abc")
+    with pytest.raises(TypeError) as e:
+        _ = val.key_list
+    with pytest.raises(TypeError) as e:
+        _ = val.item_list
+    with pytest.raises(TypeError) as e:
+        _ = val["abc"]
+    with pytest.raises(TypeError) as e:
+        _ = val[0]
+    with pytest.raises(TypeError) as e:
+        _ = val.get_string()
+    with pytest.raises(TypeError) as e:
+        _ = val.get_int()
     assert float_val == val.get_float()
+    with pytest.raises(TypeError) as e:
+        _ = val.get_bool()
 
 def test_bool_true():
     bool_val = True
@@ -127,7 +161,24 @@ def test_bool_true():
     assert val.is_bool()
     assert not val.is_object()
     assert not val.is_array()
-
+    with pytest.raises(TypeError) as e:
+        _ = len(val)
+    with pytest.raises(TypeError) as e:
+        _ = val.has_key("abc")
+    with pytest.raises(TypeError) as e:
+        _ = val.key_list
+    with pytest.raises(TypeError) as e:
+        _ = val.item_list
+    with pytest.raises(TypeError) as e:
+        _ = val["abc"]
+    with pytest.raises(TypeError) as e:
+        _ = val[0]
+    with pytest.raises(TypeError) as e:
+        _ = val.get_string()
+    with pytest.raises(TypeError) as e:
+        _ = val.get_int()
+    with pytest.raises(TypeError) as e:
+        _ = val.get_float()
     assert bool_val == val.get_bool()
 
 def test_bool_false():
@@ -142,7 +193,24 @@ def test_bool_false():
     assert val.is_bool()
     assert not val.is_object()
     assert not val.is_array()
-
+    with pytest.raises(TypeError) as e:
+        _ = len(val)
+    with pytest.raises(TypeError) as e:
+        _ = val.has_key("abc")
+    with pytest.raises(TypeError) as e:
+        _ = val.key_list
+    with pytest.raises(TypeError) as e:
+        _ = val.item_list
+    with pytest.raises(TypeError) as e:
+        _ = val["abc"]
+    with pytest.raises(TypeError) as e:
+        _ = val[0]
+    with pytest.raises(TypeError) as e:
+        _ = val.get_string()
+    with pytest.raises(TypeError) as e:
+        _ = val.get_int()
+    with pytest.raises(TypeError) as e:
+        _ = val.get_float()
     assert bool_val == val.get_bool()
 
 def test_array1():
@@ -157,8 +225,15 @@ def test_array1():
     assert not val.is_bool()
     assert not val.is_object()
     assert val.is_array()
-
     assert len(val) == 3
+    with pytest.raises(TypeError) as e:
+        _ = val.has_key("abc")
+    with pytest.raises(TypeError) as e:
+        _ = val.key_list
+    with pytest.raises(TypeError) as e:
+        _ = val.item_list
+    with pytest.raises(TypeError) as e:
+        _ = val["abc"]
     elem0 = val[0]
     assert elem0.is_string()
     assert elem0.get_string() == "xyz"
@@ -167,7 +242,7 @@ def test_array1():
     assert elem1.get_int() == 2
     elem2 = val[2]
     assert elem2.is_float()
-    assert elem2.get_float == 0.99
+    assert elem2.get_float() == 0.99
 
     elem_1 = val[-1]
     assert elem_1.is_float()
@@ -175,8 +250,18 @@ def test_array1():
     assert elem_2.is_int()
     elem_3 = val[-3]
     assert elem_3.is_string()
-    
-def test_array1():
+    with pytest.raises(ValueError) as e:
+        _ = val[4]
+    with pytest.raises(TypeError) as e:
+        _ = val.get_string()
+    with pytest.raises(TypeError) as e:
+        _ = val.get_int()
+    with pytest.raises(TypeError) as e:
+        _ = val.get_float()
+    with pytest.raises(TypeError) as e:
+        _ = val.get_bool()
+
+def test_array2():
     array_val = ("xyz", 2, 0.99)
     val = JsonValue(array_val)
     
@@ -207,6 +292,9 @@ def test_array1():
     elem_3 = val[-3]
     assert elem_3.is_string()
 
+    with pytest.raises(ValueError) as e:
+        _ = val[4]
+
 def test_object():
     dict_val = {
         "key1": "xyz",
@@ -224,6 +312,8 @@ def test_object():
     assert val.is_object()
     assert not val.is_array()
 
+    assert len(dict_val) == len(val)
+    
     elem1 = val["key1"]
     assert elem1.is_string()
     assert elem1.get_string() == "xyz"
@@ -233,6 +323,20 @@ def test_object():
     elem3 = val["key3"]
     assert elem3.is_float()
     assert elem3.get_float() == 0.99
+
+    with pytest.raises(ValueError) as e:
+        _ = val["abc"]
+        
+    with pytest.raises(TypeError) as e:
+        _ = val[0]
+    with pytest.raises(TypeError) as e:
+        _ = val.get_string()
+    with pytest.raises(TypeError) as e:
+        _ = val.get_int()
+    with pytest.raises(TypeError) as e:
+        _ = val.get_float()
+    with pytest.raises(TypeError) as e:
+        _ = val.get_bool()
     
 def test_parse_int():
 
