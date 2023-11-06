@@ -124,9 +124,8 @@ JsonValue_new(
   PyObject* kwds
 )
 {
-  // キーワード引数を取らない印
   static const char* kwlist[] = {
-    "",
+    "value",
     nullptr
   };
 
@@ -258,11 +257,19 @@ JsonValue_is_array(
 PyObject*
 JsonValue_has_key(
   PyObject* self,
-  PyObject* args
+  PyObject* args,
+  PyObject* kwds
 )
 {
+  static const char* kwlist[] = {
+    "key",
+    nullptr
+  };
+
   const char* key = nullptr;
-  if ( !PyArg_ParseTuple(args, "s", &key) ) {
+  if ( !PyArg_ParseTupleAndKeywords(args, kwds, "s",
+				    const_cast<char**>(kwlist),
+				    &key) ) {
     return nullptr;
   }
   auto val = PyJsonValue::Get(self);
@@ -317,11 +324,19 @@ JsonValue_get_bool(
 PyObject*
 JsonValue_read(
   PyObject* Py_UNUSED(self),
-  PyObject* args
+  PyObject* args,
+  PyObject* kwds
 )
 {
+  static const char* kwlist[] = {
+    "filename",
+    nullptr
+  };
+
   const char* filename = nullptr;
-  if ( !PyArg_ParseTuple(args, "s", &filename) ) {
+  if ( !PyArg_ParseTupleAndKeywords(args, kwds, "s",
+				    const_cast<char**>(kwlist),
+				    &filename) ) {
     return nullptr;
   }
   auto val = JsonValue::read(filename);
@@ -331,11 +346,19 @@ JsonValue_read(
 PyObject*
 JsonValue_parse(
   PyObject* Py_UNUSED(self),
-  PyObject* args
+  PyObject* args,
+  PyObject* kwds
 )
 {
+  static const char* kwlist[] = {
+    "json_str",
+    nullptr
+  };
+
   const char* json_str = nullptr;
-  if ( !PyArg_ParseTuple(args, "s", &json_str) ) {
+  if ( !PyArg_ParseTupleAndKeywords(args, kwds, "s",
+				    const_cast<char**>(kwlist),
+				    &json_str) ) {
     return nullptr;
   }
   auto val = JsonValue::parse(json_str);
@@ -393,7 +416,8 @@ PyMethodDef JsonValue_methods[] = {
    PyDoc_STR("check if a composed object type")},
   {"is_array", JsonValue_is_array, METH_NOARGS,
    PyDoc_STR("check if an array")},
-  {"has_key", JsonValue_has_key, METH_VARARGS,
+  {"has_key", reinterpret_cast<PyCFunction>(JsonValue_has_key),
+   METH_VARARGS | METH_KEYWORDS,
    PyDoc_STR("check if having the specified key")},
   {"get_string", JsonValue_get_string, METH_NOARGS,
    PyDoc_STR("return a string value")},
@@ -403,9 +427,11 @@ PyMethodDef JsonValue_methods[] = {
    PyDoc_STR("return a float value")},
   {"get_bool", JsonValue_get_bool, METH_NOARGS,
    PyDoc_STR("return a Boolean value")},
-  {"read", JsonValue_read, METH_VARARGS | METH_STATIC,
+  {"read", reinterpret_cast<PyCFunction>(JsonValue_read),
+   METH_VARARGS | METH_STATIC | METH_KEYWORDS,
    PyDoc_STR("read 'json' file")},
-  {"parse", JsonValue_parse, METH_VARARGS | METH_STATIC,
+  {"parse", reinterpret_cast<PyCFunction>(JsonValue_parse),
+   METH_VARARGS | METH_STATIC | METH_KEYWORDS,
    PyDoc_STR("parse 'json' string")},
   {"write", reinterpret_cast<PyCFunction>(JsonValue_write),
    METH_VARARGS | METH_KEYWORDS,
@@ -424,8 +450,30 @@ JsonValue_key_list(
   return PyBase::ToPyList(val_list);
 }
 
+PyObject*
+JsonValue_item_list(
+  PyObject* self,
+  void* Py_UNUSED(closure)
+)
+{
+  auto val = PyJsonValue::Get(self);
+  auto item_list = val.item_list();
+  SizeType n = item_list.size();
+  auto ans = PyList_New(n);
+  for ( SizeType i = 0; i < n; ++ i ) {
+    auto& p = item_list[i];
+    auto key = p.first;
+    auto value = p.second;
+    auto value_obj = PyJsonValue::ToPyObject(value);
+    auto item_obj = Py_BuildValue("(sO)", key.c_str(), value_obj);
+    PyList_SetItem(ans, i, item_obj);
+  }
+  return ans;
+}
+
 PyGetSetDef JsonValue_getsetters[] = {
   {"key_list", JsonValue_key_list, nullptr, PyDoc_STR("'key' list"), nullptr},
+  {"item_list", JsonValue_item_list, nullptr, PyDoc_STR("'item' list"), nullptr},
   {nullptr, nullptr, nullptr, nullptr}
 };
 

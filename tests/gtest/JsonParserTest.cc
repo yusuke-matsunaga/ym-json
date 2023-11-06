@@ -137,8 +137,9 @@ TEST(JsonParserTest, null_array)
   EXPECT_EQ( 0, value1.array_size() );
 }
 
-TEST(JsonParserTest, bad1)
+TEST(JsonParserTest, null_object)
 {
+  // 先頭の '{' が欠けている．
   istringstream s{"\"key\" : null }"};
 
   JsonParser parser{s};

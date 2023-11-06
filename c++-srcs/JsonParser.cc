@@ -30,7 +30,12 @@ JsonParser::~JsonParser()
 JsonValue
 JsonParser::read()
 {
-  return JsonValue{read_value()};
+  auto obj = read_value();
+  auto tk = mScanner.read_token();
+  if ( tk != JsonToken::End ) {
+    error("syntax error");
+  }
+  return JsonValue{obj};
 }
 
 // @brief 値を読み込む．
