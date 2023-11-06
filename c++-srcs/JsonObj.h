@@ -140,21 +140,6 @@ public:
   bool
   get_bool() const;
 
-  /// @brief 要素を追加する．
-  virtual
-  void
-  emplace(
-    const string& key,
-    const JsonValue& value
-  );
-
-  /// @brief 要素を追加する．
-  virtual
-  void
-  append(
-    const JsonValue& value
-  );
-
   /// @brief 内容を JSON 文字列に変換する．
   virtual
   string
@@ -241,13 +226,6 @@ public:
     const string& key ///< [in] キー
   ) const override;
 
-  /// @brief 要素を追加する．
-  void
-  emplace(
-    const string& key,
-    const JsonValue& value
-  ) override;
-
   /// @brief 内容を JSON 文字列に変換する．
   string
   to_json(
@@ -313,12 +291,6 @@ public:
   get_value(
     SizeType pos ///< [in] 位置番号 ( 0 <= pos < array_size() )
   ) const override;
-
-  /// @brief 要素を追加する．
-  void
-  append(
-    const JsonValue& value
-  ) override;
 
   /// @brief 内容を JSON 文字列に変換する．
   string
@@ -517,20 +489,18 @@ private:
 
 //////////////////////////////////////////////////////////////////////
 /// @class JsonBool JsonBool.h "JsonBool.h"
-/// @brief ブール型を表すクラス
+/// @brief ブール型の true を表すクラス
 //////////////////////////////////////////////////////////////////////
-class JsonBool :
+class JsonTrue :
   public JsonObj
 {
 public:
 
   /// @brief コンストラクタ
-  JsonBool(
-    bool value ///< [in] ブール値
-  );
+  JsonTrue();
 
   /// @brief デストラクタ
-  ~JsonBool();
+  ~JsonTrue();
 
 
 public:
@@ -560,14 +530,51 @@ public:
     const JsonObj* right
   ) const override;
 
+};
 
-private:
+
+//////////////////////////////////////////////////////////////////////
+/// @class JsonBool JsonBool.h "JsonBool.h"
+/// @brief ブール型の false を表すクラス
+//////////////////////////////////////////////////////////////////////
+class JsonFalse :
+  public JsonObj
+{
+public:
+
+  /// @brief コンストラクタ
+  JsonFalse();
+
+  /// @brief デストラクタ
+  ~JsonFalse();
+
+
+public:
   //////////////////////////////////////////////////////////////////////
-  // データメンバ
+  // 外部インターフェイス
   //////////////////////////////////////////////////////////////////////
 
-  // ブール値の本体
-  bool mValue;
+  /// @brief ブール型の時 true を返す．
+  bool
+  is_bool() const override;
+
+  /// @brief ブール値を得る．
+  ///
+  /// - ブール型でない場合は無効
+  bool
+  get_bool() const override;
+
+  /// @brief 内容を JSON 文字列に変換する．
+  string
+  to_json(
+    int indent
+  ) const override;
+
+  /// @brief 等価比較
+  bool
+  is_eq(
+    const JsonObj* right
+  ) const override;
 
 };
 

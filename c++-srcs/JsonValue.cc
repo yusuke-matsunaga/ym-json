@@ -46,10 +46,28 @@ JsonValue::JsonValue(
 {
 }
 
+BEGIN_NONAMESPACE
+
+inline
+JsonObj*
+new_JsonBool(
+  bool value
+)
+{
+  if ( value ) {
+    return new JsonTrue;
+  }
+  else {
+    return new JsonFalse;
+  }
+}
+
+END_NONAMESPACE
+
 // @brief ブール型のコンストラクタ
 JsonValue::JsonValue(
   bool value
-) : mPtr{new JsonBool{value}}
+) : mPtr{new_JsonBool(value)}
 {
 }
 
@@ -298,7 +316,16 @@ JsonValue::operator==(
   const JsonValue& right
 ) const
 {
-  return mPtr->is_eq(right.mPtr.get());
+  if ( mPtr != nullptr ) {
+    if (  right.mPtr != nullptr ) {
+      return mPtr->is_eq(right.mPtr.get());
+    }
+    return false;
+  }
+  if ( right.mPtr == nullptr ) {
+    return true;
+  }
+  return false;
 }
 
 END_NAMESPACE_YM_JSON

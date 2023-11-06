@@ -62,10 +62,10 @@ JsonParser::read_value()
     return read_array();
 
   case JsonToken::True:
-    return new JsonBool{true};
+    return new JsonTrue;
 
   case JsonToken::False:
-    return new JsonBool{false};
+    return new JsonFalse;
 
   case JsonToken::Null:
     return nullptr;

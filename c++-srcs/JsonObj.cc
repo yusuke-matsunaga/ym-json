@@ -200,25 +200,6 @@ JsonObj::get_bool() const
   return false;
 }
 
-// @brief 要素を追加する．
-void
-JsonObj::emplace(
-  const string& key,
-  const JsonValue& value
-)
-{
-  ASSERT_NOT_REACHED;
-}
-
-// @brief 要素を追加する．
-void
-JsonObj::append(
-  const JsonValue& value
-)
-{
-  ASSERT_NOT_REACHED;
-}
-
 // @brief JsonValue の内容を取り出す．
 JsonObj*
 JsonObj::obj_ptr(
@@ -269,6 +250,7 @@ JsonDict::key_list() const
   for ( auto& p: mDict ) {
     ans_list.push_back(p.first);
   }
+  // キーでソートしておく
   sort(ans_list.begin(), ans_list.end());
   return ans_list;
 }
@@ -281,6 +263,7 @@ JsonDict::item_list() const
   for ( auto& p: mDict ) {
     ans_list.push_back(p);
   }
+  // キーでソートしておく
   sort(ans_list.begin(), ans_list.end(),
        [](const pair<string, JsonValue>& a,
 	  const pair<string, JsonValue>& b){
@@ -299,16 +282,6 @@ JsonDict::get_value(
     return mDict.at(key);
   }
   return JsonValue{};
-}
-
-// @brief 要素を追加する．
-void
-JsonDict::emplace(
-  const string& key,
-  const JsonValue& value
-)
-{
-  mDict.emplace(key, value);
 }
 
 // @brief 内容を JSON 文字列に変換する．
@@ -334,9 +307,6 @@ JsonDict::to_json(
       if ( indent >= 0 ) {
 	ans += '\n';
       }
-      else {
-	ans += " ";
-      }
     }
     auto key = p.first;
     auto value = p.second;
@@ -344,7 +314,7 @@ JsonDict::to_json(
       ans += tab(indent1);
     }
     ans += escaped_string(key);
-    ans += ": ";
+    ans += ":";
     ans += obj_ptr(value)->to_json(indent1);
   }
   if ( indent >= 0 ) {
@@ -407,15 +377,6 @@ JsonArray::get_value(
 {
   ASSERT_COND( 0 <= pos && pos < array_size() );
   return mArray[pos];
-}
-
-// @brief 要素を追加する．
-void
-JsonArray::append(
-  const JsonValue& value
-)
-{
-  mArray.push_back(value);
 }
 
 // @brief 内容を JSON 文字列に変換する．
@@ -632,57 +593,100 @@ JsonFloat::is_eq(
 
 
 //////////////////////////////////////////////////////////////////////
-// クラス JsonBool
+// クラス JsonTrue
 //////////////////////////////////////////////////////////////////////
 
 // @brief コンストラクタ
-JsonBool::JsonBool(
-  bool value
-) : mValue{value}
+JsonTrue::JsonTrue()
 {
 }
 
 // @brief デストラクタ
-JsonBool::~JsonBool()
+JsonTrue::~JsonTrue()
 {
 }
 
 // @brief ブール型の時 true を返す．
 bool
-JsonBool::is_bool() const
+JsonTrue::is_bool() const
 {
   return true;
 }
 
 // @brief ブール値を得る．
 bool
-JsonBool::get_bool() const
+JsonTrue::get_bool() const
 {
-  return mValue;
+  return true;
 }
 
 // @brief 内容を JSON 文字列に変換する．
 string
-JsonBool::to_json(
+JsonTrue::to_json(
   int indent
 ) const
 {
-  if ( is_bool() ) {
-    return "true";
-  }
-  else {
-    return "false";
-  }
+  return "true";
 }
 
 // @brief 等価比較
 bool
-JsonBool::is_eq(
+JsonTrue::is_eq(
   const JsonObj* right
 ) const
 {
   if ( right->is_bool() ) {
-    return get_bool() == right->get_bool();
+    return right->get_bool();
+  }
+  return false;
+}
+
+
+//////////////////////////////////////////////////////////////////////
+// クラス JsonFalse
+//////////////////////////////////////////////////////////////////////
+
+// @brief コンストラクタ
+JsonFalse::JsonFalse()
+{
+}
+
+// @brief デストラクタ
+JsonFalse::~JsonFalse()
+{
+}
+
+// @brief ブール型の時 true を返す．
+bool
+JsonFalse::is_bool() const
+{
+  return true;
+}
+
+// @brief ブール値を得る．
+bool
+JsonFalse::get_bool() const
+{
+  return false;
+}
+
+// @brief 内容を JSON 文字列に変換する．
+string
+JsonFalse::to_json(
+  int indent
+) const
+{
+  return "false";
+}
+
+// @brief 等価比較
+bool
+JsonFalse::is_eq(
+  const JsonObj* right
+) const
+{
+  if ( right->is_bool() ) {
+    return !right->get_bool();
   }
   return false;
 }
