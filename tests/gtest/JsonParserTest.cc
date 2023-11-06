@@ -99,6 +99,7 @@ TEST(JsonParserTest, object2)
 
   auto value = parser.read();
   EXPECT_TRUE( value.is_object() );
+  EXPECT_EQ( 2, value.size() );
   auto value1 = value["key1"];
   EXPECT_TRUE( value1.is_int() );
   auto value2 = value["key2"];
@@ -115,7 +116,7 @@ TEST(JsonParserTest, array)
   EXPECT_TRUE( value.is_object() );
   auto value1 = value["key"];
   EXPECT_TRUE( value1.is_array() );
-  EXPECT_EQ( 3, value1.array_size() );
+  EXPECT_EQ( 3, value1.size() );
   auto value2 = value1[0];
   EXPECT_EQ( 1, value2.get_int() );
   auto value3 = value1[1];
@@ -134,7 +135,7 @@ TEST(JsonParserTest, null_array)
   EXPECT_TRUE( value.is_object() );
   auto value1 = value["key"];
   EXPECT_TRUE( value1.is_array() );
-  EXPECT_EQ( 0, value1.array_size() );
+  EXPECT_EQ( 0, value1.size() );
 }
 
 TEST(JsonParserTest, null_object)

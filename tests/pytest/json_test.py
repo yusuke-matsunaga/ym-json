@@ -24,7 +24,34 @@ def test_null():
     assert not val.is_bool()
     assert not val.is_object()
     assert not val.is_array()
-
+    with pytest.raises(TypeError) as e:
+        _ = val.has_key("abc")
+    with pytest.raises(TypeError) as e:
+        _ = val.key_list
+    with pytest.raises(TypeError) as e:
+        _ = val.item_list
+    with pytest.raises(TypeError) as e:
+        _ = val["abc"]
+    with pytest.raises(TypeError) as e:
+        _ = len(val)
+    with pytest.raises(TypeError) as e:
+        _ = val[0]
+    with pytest.raises(TypeError) as e:
+        _ = val.get_string()
+    with pytest.raises(TypeError) as e:
+        _ = val.get_int()
+    with pytest.raises(TypeError) as e:
+        _ = val.get_float()
+    with pytest.raises(TypeError) as e:
+        _ = val.get_bool()
+    assert str(val) == "null"
+    copy_obj = JsonValue.parse(str(val))
+    assert str(copy_obj) == str(val)
+    another_obj = JsonValue()
+    assert another_obj == val
+    int_obj = JsonValue(0)
+    assert int_obj != val
+        
 def test_string():
     str_val = "abcde"
     val = JsonValue(str_val)
@@ -37,8 +64,26 @@ def test_string():
     assert not val.is_bool()
     assert not val.is_object()
     assert not val.is_array()
-
+    with pytest.raises(TypeError) as e:
+        _ = val.has_key("abc")
+    with pytest.raises(TypeError) as e:
+        _ = val.key_list
+    with pytest.raises(TypeError) as e:
+        _ = val.item_list
+    with pytest.raises(TypeError) as e:
+        _ = val["abc"]
+    with pytest.raises(TypeError) as e:
+        _ = len(val)
+    with pytest.raises(TypeError) as e:
+        _ = val[0]
     assert str_val == val.get_string()
+    with pytest.raises(TypeError) as e:
+        _ = val.get_int()
+    with pytest.raises(TypeError) as e:
+        _ = val.get_float()
+    with pytest.raises(TypeError) as e:
+        _ = val.get_bool()
+
 
 def test_int():
     int_val = 99

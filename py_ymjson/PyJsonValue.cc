@@ -273,6 +273,10 @@ JsonValue_has_key(
     return nullptr;
   }
   auto val = PyJsonValue::Get(self);
+  if ( !val.is_object() ) {
+    PyErr_SetString(PyExc_TypeError, "not an Object type");
+    return nullptr;
+  }
   auto ans = val.has_key(key);
   return PyBool_FromLong(ans);
 }
@@ -284,6 +288,10 @@ JsonValue_get_string(
 )
 {
   auto val = PyJsonValue::Get(self);
+  if ( !val.is_string() ) {
+    PyErr_SetString(PyExc_TypeError, "not a string type");
+    return nullptr;
+  }
   auto ans = val.get_string();
   return Py_BuildValue("s", ans.c_str());
 }
@@ -295,6 +303,10 @@ JsonValue_get_int(
 )
 {
   auto val = PyJsonValue::Get(self);
+  if ( !val.is_int() ) {
+    PyErr_SetString(PyExc_TypeError, "not an integer type");
+    return nullptr;
+  }
   auto ans = val.get_int();
   return Py_BuildValue("i", ans);
 }
@@ -306,6 +318,10 @@ JsonValue_get_float(
 )
 {
   auto val = PyJsonValue::Get(self);
+  if ( !val.is_float() ) {
+    PyErr_SetString(PyExc_TypeError, "not a float type");
+    return nullptr;
+  }
   auto ans = val.get_float();
   return Py_BuildValue("d", ans);
 }
@@ -317,6 +333,10 @@ JsonValue_get_bool(
 )
 {
   auto val = PyJsonValue::Get(self);
+  if ( !val.is_bool() ) {
+    PyErr_SetString(PyExc_TypeError, "not a Boolean type");
+    return nullptr;
+  }
   auto ans = val.get_bool();
   return PyBool_FromLong(ans);
 }
@@ -446,6 +466,10 @@ JsonValue_key_list(
 )
 {
   auto val = PyJsonValue::Get(self);
+  if ( !val.is_object() ) {
+    PyErr_SetString(PyExc_TypeError, "not an Object type");
+    return nullptr;
+  }
   auto val_list = val.key_list();
   return PyBase::ToPyList(val_list);
 }
@@ -457,6 +481,10 @@ JsonValue_item_list(
 )
 {
   auto val = PyJsonValue::Get(self);
+  if ( !val.is_object() ) {
+    PyErr_SetString(PyExc_TypeError, "not an Object type");
+    return nullptr;
+  }
   auto item_list = val.item_list();
   SizeType n = item_list.size();
   auto ans = PyList_New(n);
@@ -483,11 +511,11 @@ JsonValue_length(
 )
 {
   auto val = PyJsonValue::Get(self);
-  if ( !val.is_array() ) {
-    PyErr_SetString(PyExc_TypeError, "Not an array type");
+  if ( !val.is_object() && !val.is_array() ) {
+    PyErr_SetString(PyExc_TypeError, "Neighter an object nor an array type");
     return -1;
   }
-  return val.array_size();
+  return val.size();
 }
 
 PyObject*
@@ -501,7 +529,7 @@ JsonValue_item(
     PyErr_SetString(PyExc_TypeError, "Not an array type");
     return nullptr;
   }
-  int index1 = ( index >= 0 ) ? index : val.array_size() + index;
+  int index1 = ( index >= 0 ) ? index : val.size() + index;
   auto ans = val.at(index1);
   return PyJsonValue::ToPyObject(ans);
 }
@@ -534,7 +562,7 @@ JsonValue_subscript(
       return nullptr;
     }
     auto index = PyLong_AsLong(key);
-    int index1 = ( index >= 0 ) ? index : val.array_size() + index;
+    int index1 = ( index >= 0 ) ? index : val.size() + index;
     auto ans = val.at(index1);
     return PyJsonValue::ToPyObject(ans);
   }

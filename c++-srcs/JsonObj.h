@@ -62,6 +62,13 @@ public:
   bool
   is_array() const;
 
+  /// @brief 要素数を得る．
+  ///
+  /// - オブジェクト型|配列型でない場合は無効
+  virtual
+  SizeType
+  size() const;
+
   /// @brief オブジェクトがキーを持つか調べる．
   ///
   /// - オブジェクト型でない場合は無効
@@ -95,13 +102,6 @@ public:
     const string& key ///< [in] キー
   ) const;
 
-  /// @brief 配列の要素数を得る．
-  ///
-  /// - 配列型でない場合は無効
-  virtual
-  SizeType
-  array_size() const;
-
   /// @brief 配列の要素を得る．
   ///
   /// - 配列型でない場合は無効
@@ -109,7 +109,7 @@ public:
   virtual
   JsonValue
   get_value(
-    SizeType pos ///< [in] 位置番号 ( 0 <= pos < array_size() )
+    SizeType pos ///< [in] 位置番号 ( 0 <= pos < size() )
   ) const;
 
   /// @brief 文字列を得る．
@@ -197,6 +197,10 @@ public:
   bool
   is_object() const override;
 
+  /// @brief 要素数を得る．
+  SizeType
+  size() const override;
+
   /// @brief オブジェクトがキーを持つか調べる．
   ///
   /// - オブジェクト型でない場合は無効
@@ -277,11 +281,9 @@ public:
   bool
   is_array() const override;
 
-  /// @brief 配列の要素数を得る．
-  ///
-  /// - 配列型でない場合は無効
+  /// @brief 要素数を得る．
   SizeType
-  array_size() const override;
+  size() const override;
 
   /// @brief 配列の要素を得る．
   ///
@@ -289,7 +291,7 @@ public:
   /// - 配列のサイズ外のアクセスはエラーとなる．
   JsonValue
   get_value(
-    SizeType pos ///< [in] 位置番号 ( 0 <= pos < array_size() )
+    SizeType pos ///< [in] 位置番号 ( 0 <= pos < size() )
   ) const override;
 
   /// @brief 内容を JSON 文字列に変換する．

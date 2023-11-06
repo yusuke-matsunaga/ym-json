@@ -142,9 +142,16 @@ public:
   bool
   is_array() const;
 
+  /// @brief 要素数を得る．
+  ///
+  /// - is_object() == false and is_array() == false
+  ///   の時は std::invalid_argument 例外を送出する．
+  SizeType
+  size() const;
+
   /// @brief オブジェクトがキーを持つか調べる．
   ///
-  /// - オブジェクト型でない場合は無効
+  /// - is_object() == false の時は std::invalid_argument 例外を送出する．
   bool
   has_key(
     const string& key ///< [in] キー
@@ -152,20 +159,20 @@ public:
 
   /// @brief キーのリストを返す．
   ///
-  /// - オブジェクト型でない場合は無効
+  /// - is_object() == false の時は std::invalid_argument 例外を送出する．
   vector<string>
   key_list() const;
 
   /// @brief キーと値のリストを返す．
   ///
-  /// - オブジェクト型でない場合は無効
+  /// - is_object() == false の時は std::invalid_argument 例外を送出する．
   vector<pair<string, JsonValue>>
   item_list() const;
 
   /// @brief オブジェクトの要素を得る．
   ///
-  /// - オブジェクト型でない場合は無効
-  /// - key に対応する値がない場合は null を返す．
+  /// - is_object() == false の時は std::invalid_argument 例外を送出する．
+  /// - key に対応する値がない場合は std::invalid_argument 例外を送出する．
   JsonValue
   operator[](
     const string& key ///< [in] キー
@@ -176,23 +183,17 @@ public:
 
   /// @brief operator[] の別名
   ///
-  /// - オブジェクト型でない場合は無効
-  /// - key に対応する値がない場合は null を返す．
+  /// - is_object() == false の時は std::invalid_argument 例外を送出する．
+  /// - key に対応する値がない場合は std::invalid_argument 例外を送出する．
   JsonValue
   at(
     const string& key ///< [in] キー
   ) const;
 
-  /// @brief 配列の要素数を得る．
-  ///
-  /// - 配列型でない場合は無効
-  SizeType
-  array_size() const;
-
   /// @brief 配列の要素を得る．
   ///
-  /// - 配列型でない場合は無効
-  /// - 配列のサイズ外のアクセスはエラーとなる．
+  /// - is_array() == false の時は std::invalid_argument 例外を送出する．
+  /// - 配列のサイズ外のアクセスは std::out_of_range 例外を送出する．
   JsonValue
   operator[](
     SizeType pos ///< [in] 位置番号 ( 0 <= pos < array_size() )
@@ -203,8 +204,8 @@ public:
 
   /// @brief operator[] の別名
   ///
-  /// - 配列型でない場合は無効
-  /// - 配列のサイズ外のアクセスはエラーとなる．
+  /// - is_array() == false の時は std::invalid_argument 例外を送出する．
+  /// - 配列のサイズ外のアクセスは std::out_of_range 例外を送出する．
   JsonValue
   at(
     SizeType pos ///< [in] 位置番号 ( 0 <= pos < array_size() )
@@ -212,25 +213,25 @@ public:
 
   /// @brief 文字列を得る．
   ///
-  /// - 文字列型でない場合は無効
+  /// - is_string() == false の時は std::invalid_argument 例外を送出する．
   string
   get_string() const;
 
   /// @brief 整数値を得る．
   ///
-  /// - 整数型でない場合は無効
+  /// - is_int() == false の時は std::invalid_argument 例外を送出する．
   int
   get_int() const;
 
   /// @brief 浮動小数点値を得る．
   ///
-  /// - 浮動小数点型でない場合は無効
+  /// - is_float() == false の時は std::invalid_argument 例外を送出する．
   double
   get_float() const;
 
   /// @brief ブール値を得る．
   ///
-  /// - ブール型でない場合は無効
+  /// - is_bool() == false の時は std::invalid_argument 例外を送出する．
   bool
   get_bool() const;
 
@@ -338,6 +339,15 @@ private:
   {
     if ( !is_array() ) {
       throw std::invalid_argument{"not an array-type"};
+    }
+  }
+
+  /// @brief オブジェクト型か配列型かどうかチェックする．
+  void
+  _check_object_or_array() const
+  {
+    if ( !is_object() && !is_array() ) {
+      throw std::invalid_argument{"not an object|array-type"};
     }
   }
 

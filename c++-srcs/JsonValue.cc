@@ -174,6 +174,14 @@ JsonValue::is_array() const
   return mPtr->is_array();
 }
 
+// @brief 配列の要素数を得る．
+SizeType
+JsonValue::size() const
+{
+  _check_object_or_array();
+  return mPtr->size();
+}
+
 // @brief オブジェクトがキーを持つか調べる．
 bool
 JsonValue::has_key(
@@ -208,14 +216,6 @@ JsonValue::at(
 {
   _check_object();
   return mPtr->get_value(key);
-}
-
-// @brief 配列の要素数を得る．
-SizeType
-JsonValue::array_size() const
-{
-  _check_array();
-  return mPtr->array_size();
 }
 
 // @brief 配列の要素を得る．

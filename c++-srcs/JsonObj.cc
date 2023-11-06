@@ -114,6 +114,14 @@ JsonObj::is_array() const
   return false;
 }
 
+// @brief 配列の要素数を得る．
+SizeType
+JsonObj::size() const
+{
+  ASSERT_NOT_REACHED;
+  return 0;
+}
+
 // @brief オブジェクトがキーを持つか調べる．
 bool
 JsonObj::has_key(
@@ -148,14 +156,6 @@ JsonObj::get_value(
 {
   ASSERT_NOT_REACHED;
   return JsonValue{};
-}
-
-// @brief 配列の要素数を得る．
-SizeType
-JsonObj::array_size() const
-{
-  ASSERT_NOT_REACHED;
-  return 0;
 }
 
 // @brief 配列の要素を得る．
@@ -233,6 +233,13 @@ JsonDict::is_object() const
   return true;
 }
 
+// @brief 要素数を得る．
+SizeType
+JsonDict::size() const
+{
+  return mDict.size();
+}
+
 // @brief オブジェクトがキーを持つか調べる．
 bool
 JsonDict::has_key(
@@ -278,10 +285,12 @@ JsonDict::get_value(
   const string& key
 ) const
 {
-  if ( mDict.count(key) > 0 ) {
-    return mDict.at(key);
+  if ( mDict.count(key) == 0 ) {
+    ostringstream buf;
+    buf << key << ": invalid key";
+    throw std::invalid_argument{buf.str()};
   }
-  return JsonValue{};
+  return mDict.at(key);
 }
 
 // @brief 内容を JSON 文字列に変換する．
@@ -362,9 +371,9 @@ JsonArray::is_array() const
   return true;
 }
 
-// @brief 配列の要素数を得る．
+// @brief 要素数を得る．
 SizeType
-JsonArray::array_size() const
+JsonArray::size() const
 {
   return mArray.size();
 }
@@ -375,7 +384,9 @@ JsonArray::get_value(
   SizeType pos
 ) const
 {
-  ASSERT_COND( 0 <= pos && pos < array_size() );
+  if ( pos < 0 || size() <= pos ) {
+    throw std::out_of_range("pos is out of range");
+  }
   return mArray[pos];
 }
 

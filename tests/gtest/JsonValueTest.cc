@@ -31,7 +31,7 @@ TEST(JsonValueTest, null)
   EXPECT_THROW( {json_obj["abc"];}, std::invalid_argument );
   EXPECT_THROW( {json_obj.at("abc");}, std::invalid_argument );
   // for Array-type
-  EXPECT_THROW( {json_obj.array_size();}, std::invalid_argument );
+  EXPECT_THROW( {json_obj.size();}, std::invalid_argument );
   EXPECT_THROW( {json_obj[0];}, std::invalid_argument );
   EXPECT_THROW( {json_obj.at(0);}, std::invalid_argument );
   // for string-type
@@ -73,7 +73,7 @@ TEST(JsonValueTest, null2)
   EXPECT_THROW( {json_obj["abc"];}, std::invalid_argument );
   EXPECT_THROW( {json_obj.at("abc");}, std::invalid_argument );
   // for Array-type
-  EXPECT_THROW( {json_obj.array_size();}, std::invalid_argument );
+  EXPECT_THROW( {json_obj.size();}, std::invalid_argument );
   EXPECT_THROW( {json_obj[0];}, std::invalid_argument );
   EXPECT_THROW( {json_obj.at(0);}, std::invalid_argument );
   // for string-type
@@ -116,7 +116,7 @@ TEST(JsonValueTest, string1)
   EXPECT_THROW( {json_obj["abc"];}, std::invalid_argument );
   EXPECT_THROW( {json_obj.at("abc");}, std::invalid_argument );
   // for Array-type
-  EXPECT_THROW( {json_obj.array_size();}, std::invalid_argument );
+  EXPECT_THROW( {json_obj.size();}, std::invalid_argument );
   EXPECT_THROW( {json_obj[0];}, std::invalid_argument );
   EXPECT_THROW( {json_obj.at(0);}, std::invalid_argument );
   // for string-type
@@ -161,7 +161,7 @@ TEST(JsonValueTest, string2)
   EXPECT_THROW( {json_obj["abc"];}, std::invalid_argument );
   EXPECT_THROW( {json_obj.at("abc");}, std::invalid_argument );
   // for Array-type
-  EXPECT_THROW( {json_obj.array_size();}, std::invalid_argument );
+  EXPECT_THROW( {json_obj.size();}, std::invalid_argument );
   EXPECT_THROW( {json_obj[0];}, std::invalid_argument );
   EXPECT_THROW( {json_obj.at(0);}, std::invalid_argument );
   // for string-type
@@ -201,6 +201,8 @@ TEST(JsonValueTest, string_dq)
   EXPECT_FALSE( json_obj.is_array() );
 
   EXPECT_EQ( value, json_obj.get_string() );
+  // double-quote を含む文字列を表す json 文字列は
+  // single-quote を用いる．
   EXPECT_EQ( "'\"abcde\"'", json_obj.to_json() );
 }
 
@@ -219,6 +221,8 @@ TEST(JsonValueTest, string_sq)
   EXPECT_FALSE( json_obj.is_array() );
 
   EXPECT_EQ( value, json_obj.get_string() );
+  // single-quote を含む文字列を表す json 文字列は
+  // double-quote を用いる．
   EXPECT_EQ( "\"'abcde'\"", json_obj.to_json() );
 }
 
@@ -237,6 +241,8 @@ TEST(JsonValueTest, string_dqsq)
   EXPECT_FALSE( json_obj.is_array() );
 
   EXPECT_EQ( value, json_obj.get_string() );
+  // single-quote と double-quote を含む文字列を表す json 文字列は
+  // double-quote を用い，double-quote をエスケープする．
   EXPECT_EQ( R"("\"'abcde'\"")", json_obj.to_json() );
 }
 
@@ -260,7 +266,7 @@ TEST(JsonValueTest, int)
   EXPECT_THROW( {json_obj["abc"];}, std::invalid_argument );
   EXPECT_THROW( {json_obj.at("abc");}, std::invalid_argument );
   // for Array-type
-  EXPECT_THROW( {json_obj.array_size();}, std::invalid_argument );
+  EXPECT_THROW( {json_obj.size();}, std::invalid_argument );
   EXPECT_THROW( {json_obj[0];}, std::invalid_argument );
   EXPECT_THROW( {json_obj.at(0);}, std::invalid_argument );
   // for string-type
@@ -305,7 +311,7 @@ TEST(JsonValueTest, float)
   EXPECT_THROW( {json_obj["abc"];}, std::invalid_argument );
   EXPECT_THROW( {json_obj.at("abc");}, std::invalid_argument );
   // for Array-type
-  EXPECT_THROW( {json_obj.array_size();}, std::invalid_argument );
+  EXPECT_THROW( {json_obj.size();}, std::invalid_argument );
   EXPECT_THROW( {json_obj[0];}, std::invalid_argument );
   EXPECT_THROW( {json_obj.at(0);}, std::invalid_argument );
   // for string-type
@@ -350,7 +356,7 @@ TEST(JsonValueTest, bool_true)
   EXPECT_THROW( {json_obj["abc"];}, std::invalid_argument );
   EXPECT_THROW( {json_obj.at("abc");}, std::invalid_argument );
   // for Array-type
-  EXPECT_THROW( {json_obj.array_size();}, std::invalid_argument );
+  EXPECT_THROW( {json_obj.size();}, std::invalid_argument );
   EXPECT_THROW( {json_obj[0];}, std::invalid_argument );
   EXPECT_THROW( {json_obj.at(0);}, std::invalid_argument );
   // for string-type
@@ -393,7 +399,7 @@ TEST(JsonValueTest, bool_false)
   EXPECT_THROW( {json_obj["abc"];}, std::invalid_argument );
   EXPECT_THROW( {json_obj.at("abc");}, std::invalid_argument );
   // for Array-type
-  EXPECT_THROW( {json_obj.array_size();}, std::invalid_argument );
+  EXPECT_THROW( {json_obj.size();}, std::invalid_argument );
   EXPECT_THROW( {json_obj[0];}, std::invalid_argument );
   EXPECT_THROW( {json_obj.at(0);}, std::invalid_argument );
   // for string-type
@@ -445,13 +451,15 @@ TEST(JsonValueTest, array1)
   EXPECT_THROW( {json_obj["abc"];}, std::invalid_argument );
   EXPECT_THROW( {json_obj.at("abc");}, std::invalid_argument );
   // for Array-type
-  EXPECT_EQ( value.size(), json_obj.array_size() );
+  EXPECT_EQ( value.size(), json_obj.size() );
   EXPECT_EQ( json1, json_obj[0] );
   EXPECT_EQ( json2, json_obj[1] );
   EXPECT_EQ( json3, json_obj[2] );
   EXPECT_EQ( json1, json_obj.at(0) );
   EXPECT_EQ( json2, json_obj.at(1) );
   EXPECT_EQ( json3, json_obj.at(2) );
+  EXPECT_THROW( {json_obj[3];}, std::out_of_range );
+  EXPECT_THROW( {json_obj.at(4);}, std::out_of_range );
   // for string-type
   EXPECT_THROW( {json_obj.get_string();}, std::invalid_argument );
   // for integer-type
@@ -510,6 +518,8 @@ TEST(JsonValueTest, object1)
   EXPECT_EQ( json3, json_obj["key3"] );
   EXPECT_EQ( json3, json_obj.at("key3") );
   EXPECT_FALSE( json_obj.has_key("abc") );
+  EXPECT_THROW( {json_obj["abc"];}, std::invalid_argument );
+  EXPECT_THROW( {json_obj.at("abc");}, std::invalid_argument );
   vector<string> exp_key_list{"key1", "key2", "key3"};
   EXPECT_EQ( exp_key_list, json_obj.key_list() );
   vector<pair<string, JsonValue>> exp_item_list{
@@ -519,7 +529,7 @@ TEST(JsonValueTest, object1)
   };
   EXPECT_EQ( exp_item_list, json_obj.item_list() );
   // for Array-type
-  EXPECT_THROW( {json_obj.array_size();}, std::invalid_argument );
+  EXPECT_EQ( value.size(), json_obj.size() );
   EXPECT_THROW( {json_obj[0];}, std::invalid_argument );
   EXPECT_THROW( {json_obj.at(0);}, std::invalid_argument );
   // for string-type

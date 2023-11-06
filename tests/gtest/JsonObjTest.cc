@@ -121,7 +121,7 @@ TEST(JsonObjTest, array1)
   EXPECT_FALSE( json_obj->is_object() );
   EXPECT_TRUE( json_obj->is_array() );
 
-  EXPECT_EQ( value.size(), json_obj->array_size() );
+  EXPECT_EQ( value.size(), json_obj->size() );
   EXPECT_EQ( json1, json_obj->get_value(0) );
   EXPECT_EQ( json2, json_obj->get_value(1) );
   EXPECT_EQ( json3, json_obj->get_value(2) );
@@ -152,6 +152,7 @@ TEST(JsonObjTest, object1)
   EXPECT_TRUE( json_obj->is_object() );
   EXPECT_FALSE( json_obj->is_array() );
 
+  //EXPECT_EQ( value.size(), json_obj->size() );
   EXPECT_TRUE( json_obj->has_key("key1") );
   EXPECT_EQ( json1, json_obj->get_value("key1") );
   EXPECT_TRUE( json_obj->has_key("key2") );
