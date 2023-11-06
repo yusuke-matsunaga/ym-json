@@ -44,6 +44,9 @@ TEST(JsonValueTest, null)
   EXPECT_THROW( {json_obj.get_bool();}, std::invalid_argument );
   // to_json()
   EXPECT_EQ( "null", json_obj.to_json() );
+  // parse()
+  auto copy_obj = JsonValue::parse(json_obj.to_json());
+  EXPECT_EQ( copy_obj, json_obj );
   // eq
   JsonValue another_obj;
   EXPECT_TRUE( another_obj == json_obj );
@@ -83,6 +86,9 @@ TEST(JsonValueTest, null2)
   EXPECT_THROW( {json_obj.get_bool();}, std::invalid_argument );
   // to_json()
   EXPECT_EQ( "null", json_obj.to_json() );
+  // parse()
+  auto copy_obj = JsonValue::parse(json_obj.to_json());
+  EXPECT_EQ( copy_obj, json_obj );
   // eq
   JsonValue another_obj;
   EXPECT_TRUE( another_obj == json_obj );
@@ -125,6 +131,9 @@ TEST(JsonValueTest, string1)
   ostringstream buf;
   buf << '"' << value << '"';
   EXPECT_EQ( buf.str(), json_obj.to_json() );
+  // parse()
+  auto copy_obj = JsonValue::parse(json_obj.to_json());
+  EXPECT_EQ( copy_obj, json_obj );
   // eq
   JsonValue another_obj{value};
   EXPECT_TRUE( another_obj == json_obj );
@@ -167,6 +176,9 @@ TEST(JsonValueTest, string2)
   ostringstream buf;
   buf << '"' << value << '"';
   EXPECT_EQ( buf.str(), json_obj.to_json() );
+  // parse()
+  auto copy_obj = JsonValue::parse(json_obj.to_json());
+  EXPECT_EQ( copy_obj, json_obj );
   // eq
   JsonValue another_obj{value};
   EXPECT_TRUE( another_obj == json_obj );
@@ -263,6 +275,9 @@ TEST(JsonValueTest, int)
   ostringstream buf;
   buf << value;
   EXPECT_EQ( buf.str(), json_obj.to_json() );
+  // parse()
+  auto copy_obj = JsonValue::parse(json_obj.to_json());
+  EXPECT_EQ( copy_obj, json_obj );
   // eq
   JsonValue another_obj{value};
   EXPECT_TRUE( another_obj == json_obj );
@@ -305,6 +320,9 @@ TEST(JsonValueTest, float)
   ostringstream buf;
   buf << value;
   EXPECT_EQ( buf.str(), json_obj.to_json() );
+  // parse()
+  auto copy_obj = JsonValue::parse(json_obj.to_json());
+  EXPECT_EQ( copy_obj, json_obj );
   // eq
   JsonValue another_obj{value};
   EXPECT_TRUE( another_obj == json_obj );
@@ -345,6 +363,9 @@ TEST(JsonValueTest, bool_true)
   EXPECT_EQ( value, json_obj.get_bool() );
   // to_json()
   EXPECT_EQ( "true", json_obj.to_json() );
+  // parse()
+  auto copy_obj = JsonValue::parse(json_obj.to_json());
+  EXPECT_EQ( copy_obj, json_obj );
   // eq
   JsonValue another_obj{true};
   EXPECT_TRUE( another_obj == json_obj );
@@ -385,6 +406,9 @@ TEST(JsonValueTest, bool_false)
   EXPECT_EQ( value, json_obj.get_bool() );
   // to_json()
   EXPECT_EQ( "false", json_obj.to_json() );
+  // parse()
+  auto copy_obj = JsonValue::parse(json_obj.to_json());
+  EXPECT_EQ( copy_obj, json_obj );
   // eq
   JsonValue another_obj{false};
   EXPECT_TRUE( another_obj == json_obj );
@@ -439,6 +463,9 @@ TEST(JsonValueTest, array1)
   // to_json()
   const char* exp_str = "[\"xyz\",2,0.99]";
   EXPECT_EQ( exp_str, json_obj.to_json() );
+  // parse()
+  auto copy_obj = JsonValue::parse(json_obj.to_json());
+  EXPECT_EQ( exp_str, copy_obj.to_json() );
   // eq
   JsonValue another_obj{value};
   EXPECT_TRUE( another_obj == json_obj );
@@ -506,6 +533,9 @@ TEST(JsonValueTest, object1)
   // to_json()
   const char* exp_str = "{\"key1\":\"xyz\",\"key2\":2,\"key3\":0.99}";
   EXPECT_EQ( exp_str, json_obj.to_json() );
+  // parse()
+  auto copy_obj = JsonValue::parse(json_obj.to_json());
+  EXPECT_EQ( exp_str, copy_obj.to_json() );
   // eq
   JsonValue another_obj{value};
   EXPECT_TRUE( another_obj == json_obj );

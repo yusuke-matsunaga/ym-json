@@ -273,9 +273,8 @@ JsonValue::read(
     throw std::invalid_argument{buf.str()};
   }
 
-  JsonParser parser;
-  auto obj = parser.read(s);
-  return JsonValue{obj};
+  JsonParser parser{s};
+  return parser.read();
 }
 
 // @brief JSON文字列をパースする．
@@ -285,9 +284,8 @@ JsonValue::parse(
 )
 {
   istringstream s{json_str};
-  JsonParser parser;
-  auto obj = parser.read(s);
-  return JsonValue{obj};
+  JsonParser parser{s};
+  return parser.read();
 }
 
 // @brief 内容を JSON 文字列に変換する．
@@ -339,9 +337,8 @@ operator>>(
   JsonValue& json_obj
 )
 {
-  nsJson::JsonParser parser;
-  auto obj = parser.read(s);
-  json_obj = JsonValue{obj};
+  nsJson::JsonParser parser{s};
+  json_obj = parser.read();
   return s;
 }
 

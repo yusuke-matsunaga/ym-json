@@ -9,12 +9,12 @@
 /// All rights reserved.
 
 #include "ym/json.h"
+#include "JsonScanner.h"
 
 
 BEGIN_NAMESPACE_YM_JSON
 
 class JsonObj;
-class JsonScanner;
 class Region;
 
 //////////////////////////////////////////////////////////////////////
@@ -26,7 +26,9 @@ class JsonParser
 public:
 
   /// @brief コンストラクタ
-  JsonParser();
+  JsonParser(
+    istream& s ///< [in] 入力ストリーム
+  );
 
   /// @brief デストラクタ
   ~JsonParser();
@@ -38,10 +40,8 @@ public:
   //////////////////////////////////////////////////////////////////////
 
   /// @brief 読み込む．
-  JsonObj*
-  read(
-    istream& s ///< [in] 入力ストリーム
-  );
+  JsonValue
+  read();
 
 
 private:
@@ -74,7 +74,7 @@ private:
   //////////////////////////////////////////////////////////////////////
 
   // スキャナー
-  JsonScanner* mScanner{nullptr};
+  JsonScanner mScanner;
 
 };
 

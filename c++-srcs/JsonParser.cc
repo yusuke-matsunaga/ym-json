@@ -15,7 +15,9 @@
 BEGIN_NAMESPACE_YM_JSON
 
 // @brief コンストラクタ
-JsonParser::JsonParser()
+JsonParser::JsonParser(
+  istream& s
+) : mScanner{s}
 {
 }
 
@@ -25,35 +27,26 @@ JsonParser::~JsonParser()
 }
 
 // @brief 読み込む．
-JsonObj*
-JsonParser::read(
-  istream& s
-)
+JsonValue
+JsonParser::read()
 {
-  JsonScanner scanner{s};
-  mScanner = &scanner;
-
-  auto tk = mScanner->read_token();
-  if ( tk != JsonToken::LCB ) {
-    error("'{' is expected.");
-  }
-  return read_object();
+  return JsonValue{read_value()};
 }
 
 // @brief 値を読み込む．
 JsonObj*
 JsonParser::read_value()
 {
-  auto tk = mScanner->read_token();
+  auto tk = mScanner.read_token();
   switch ( tk ) {
   case JsonToken::String:
-    return new JsonString{mScanner->cur_string()};
+    return new JsonString{mScanner.cur_string()};
 
   case JsonToken::Int:
-    return new JsonInt{mScanner->cur_int()};
+    return new JsonInt{mScanner.cur_int()};
 
   case JsonToken::Float:
-    return new JsonFloat{mScanner->cur_float()};
+    return new JsonFloat{mScanner.cur_float()};
 
   case JsonToken::LCB:
     return read_object();
@@ -74,7 +67,7 @@ JsonParser::read_value()
     // シンタックスエラー
     {
       ostringstream buf;
-      buf << "'" << mScanner->cur_string() << "': unexpected token";
+      buf << "'" << mScanner.cur_string() << "': unexpected token";
       error(buf.str());
     }
   }
@@ -87,18 +80,18 @@ JsonObj*
 JsonParser::read_object()
 {
   unordered_map<string, JsonValue> dict;
-  auto tk = mScanner->read_token();
+  auto tk = mScanner.read_token();
   if ( tk == JsonToken::RCB ) {
     // 空のオブジェクト
     auto obj = new JsonDict{dict};
     return obj;
   }
-  mScanner->unget_token(tk);
+  mScanner.unget_token(tk);
   for ( ; ; ) {
-    auto tk = mScanner->read_token();
+    auto tk = mScanner.read_token();
     if ( tk == JsonToken::String ) {
-      auto key = mScanner->cur_string();
-      tk = mScanner->read_token();
+      auto key = mScanner.cur_string();
+      tk = mScanner.read_token();
       if ( tk != JsonToken::Colon ) {
 	// ':' ではなかった．
 	error("':' is expected");
@@ -109,12 +102,12 @@ JsonParser::read_object()
     else {
       // シンタックスエラー
       ostringstream buf;
-      buf << mScanner->cur_string()
+      buf << mScanner.cur_string()
 	  << ": illegal token, string is expected";
       error(buf.str());
     }
 
-    tk = mScanner->read_token();
+    tk = mScanner.read_token();
     if ( tk == JsonToken::RCB ) {
       break;
     }
@@ -122,7 +115,7 @@ JsonParser::read_object()
     if ( tk != JsonToken::Comma ) {
       // シンタックスエラー
       ostringstream buf;
-      buf << mScanner->cur_string()
+      buf << mScanner.cur_string()
 	  << ": illegal token, ',' is expected";
       error(buf.str());
     }
@@ -135,7 +128,7 @@ JsonParser::read_object()
 JsonObj*
 JsonParser::read_array()
 {
-  auto tk = mScanner->read_token();
+  auto tk = mScanner.read_token();
   if ( tk == JsonToken::RBK ) {
     // 空の配列
     auto obj = new JsonArray{{}};
@@ -146,19 +139,19 @@ JsonParser::read_array()
     error("unexpected EOF");
   }
 
-  mScanner->unget_token(tk);
+  mScanner.unget_token(tk);
   vector<JsonValue> array;
   for ( ; ; ) {
     auto value = read_value();
     array.push_back(JsonValue{value});
-    tk = mScanner->read_token();
+    tk = mScanner.read_token();
     if ( tk == JsonToken::RBK ) {
       break;
     }
     if ( tk != JsonToken::Comma ) {
       // シンタックスエラー
       ostringstream buf;
-      buf << mScanner->cur_string()
+      buf << mScanner.cur_string()
 	  << ": illegal token, ',' is expected";
       error(buf.str());
     }
@@ -174,7 +167,7 @@ JsonParser::error(
 )
 {
   ostringstream buf;
-  buf << mScanner->cur_loc()
+  buf << mScanner.cur_loc()
       << ": " << msg;
   throw std::invalid_argument(buf.str());
 }
