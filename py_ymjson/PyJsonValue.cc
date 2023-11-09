@@ -150,7 +150,7 @@ JsonValue_repr(
   PyObject* self
 )
 {
-  auto val = PyJsonValue::Get(self);
+  auto& val = PyJsonValue::Get(self);
   auto tmp_str = val.to_json();
   return Py_BuildValue("s", tmp_str.c_str());
 }
@@ -172,7 +172,7 @@ JsonValue_is_null(
   PyObject* Py_UNUSED(args)
 )
 {
-  auto val = PyJsonValue::Get(self);
+  auto& val = PyJsonValue::Get(self);
   auto ans = val.is_null();
   return PyBool_FromLong(ans);
 }
@@ -183,7 +183,7 @@ JsonValue_is_string(
   PyObject* Py_UNUSED(args)
 )
 {
-  auto val = PyJsonValue::Get(self);
+  auto& val = PyJsonValue::Get(self);
   auto ans = val.is_string();
   return PyBool_FromLong(ans);
 }
@@ -194,7 +194,7 @@ JsonValue_is_number(
   PyObject* Py_UNUSED(args)
 )
 {
-  auto val = PyJsonValue::Get(self);
+  auto& val = PyJsonValue::Get(self);
   auto ans = val.is_number();
   return PyBool_FromLong(ans);
 }
@@ -205,7 +205,7 @@ JsonValue_is_int(
   PyObject* Py_UNUSED(args)
 )
 {
-  auto val = PyJsonValue::Get(self);
+  auto& val = PyJsonValue::Get(self);
   auto ans = val.is_int();
   return PyBool_FromLong(ans);
 }
@@ -216,7 +216,7 @@ JsonValue_is_float(
   PyObject* Py_UNUSED(args)
 )
 {
-  auto val = PyJsonValue::Get(self);
+  auto& val = PyJsonValue::Get(self);
   auto ans = val.is_float();
   return PyBool_FromLong(ans);
 }
@@ -227,7 +227,7 @@ JsonValue_is_bool(
   PyObject* Py_UNUSED(args)
 )
 {
-  auto val = PyJsonValue::Get(self);
+  auto& val = PyJsonValue::Get(self);
   auto ans = val.is_bool();
   return PyBool_FromLong(ans);
 }
@@ -238,7 +238,7 @@ JsonValue_is_object(
   PyObject* Py_UNUSED(args)
 )
 {
-  auto val = PyJsonValue::Get(self);
+  auto& val = PyJsonValue::Get(self);
   auto ans = val.is_object();
   return PyBool_FromLong(ans);
 }
@@ -249,7 +249,7 @@ JsonValue_is_array(
   PyObject* Py_UNUSED(args)
 )
 {
-  auto val = PyJsonValue::Get(self);
+  auto& val = PyJsonValue::Get(self);
   auto ans = val.is_array();
   return PyBool_FromLong(ans);
 }
@@ -272,7 +272,7 @@ JsonValue_has_key(
 				    &key) ) {
     return nullptr;
   }
-  auto val = PyJsonValue::Get(self);
+  auto& val = PyJsonValue::Get(self);
   if ( !val.is_object() ) {
     PyErr_SetString(PyExc_TypeError, "not an Object type");
     return nullptr;
@@ -287,7 +287,7 @@ JsonValue_get_string(
   PyObject* Py_UNUSED(args)
 )
 {
-  auto val = PyJsonValue::Get(self);
+  auto& val = PyJsonValue::Get(self);
   if ( !val.is_string() ) {
     PyErr_SetString(PyExc_TypeError, "not a string type");
     return nullptr;
@@ -302,7 +302,7 @@ JsonValue_get_int(
   PyObject* Py_UNUSED(args)
 )
 {
-  auto val = PyJsonValue::Get(self);
+  auto& val = PyJsonValue::Get(self);
   if ( !val.is_int() ) {
     PyErr_SetString(PyExc_TypeError, "not an integer type");
     return nullptr;
@@ -317,7 +317,7 @@ JsonValue_get_float(
   PyObject* Py_UNUSED(args)
 )
 {
-  auto val = PyJsonValue::Get(self);
+  auto& val = PyJsonValue::Get(self);
   if ( !val.is_float() ) {
     PyErr_SetString(PyExc_TypeError, "not a float type");
     return nullptr;
@@ -332,7 +332,7 @@ JsonValue_get_bool(
   PyObject* Py_UNUSED(args)
 )
 {
-  auto val = PyJsonValue::Get(self);
+  auto& val = PyJsonValue::Get(self);
   if ( !val.is_bool() ) {
     PyErr_SetString(PyExc_TypeError, "not a Boolean type");
     return nullptr;
@@ -359,8 +359,14 @@ JsonValue_read(
 				    &filename) ) {
     return nullptr;
   }
-  auto val = JsonValue::read(filename);
-  return PyJsonValue::ToPyObject(val);
+  try {
+    auto val = JsonValue::read(filename);
+    return PyJsonValue::ToPyObject(val);
+  }
+  catch ( std::invalid_argument err ) {
+    PyErr_SetString(PyExc_ValueError, err.what());
+    return nullptr;
+  }
 }
 
 PyObject*
@@ -381,8 +387,14 @@ JsonValue_parse(
 				    &json_str) ) {
     return nullptr;
   }
-  auto val = JsonValue::parse(json_str);
-  return PyJsonValue::ToPyObject(val);
+  try {
+    auto val = JsonValue::parse(json_str);
+    return PyJsonValue::ToPyObject(val);
+  }
+  catch ( std::invalid_argument err ) {
+    PyErr_SetString(PyExc_ValueError, err.what());
+    return nullptr;
+  }
 }
 
 PyObject*
@@ -412,7 +424,7 @@ JsonValue_write(
     PyErr_SetString(PyExc_ValueError, buff.str().c_str());
     return nullptr;
   }
-  auto json_value = PyJsonValue::Get(self);
+  auto& json_value = PyJsonValue::Get(self);
   json_value.write(s, static_cast<bool>(indent));
 
   Py_RETURN_NONE;
@@ -465,13 +477,19 @@ JsonValue_key_list(
   void* Py_UNUSED(closure)
 )
 {
-  auto val = PyJsonValue::Get(self);
+  auto& val = PyJsonValue::Get(self);
   if ( !val.is_object() ) {
     PyErr_SetString(PyExc_TypeError, "not an Object type");
     return nullptr;
   }
-  auto val_list = val.key_list();
-  return PyBase::ToPyList(val_list);
+  try {
+    auto val_list = val.key_list();
+    return PyBase::ToPyList(val_list);
+  }
+  catch ( std::invalid_argument err ) {
+    PyErr_SetString(PyExc_ValueError, err.what());
+    return nullptr;
+  }
 }
 
 PyObject*
@@ -480,23 +498,29 @@ JsonValue_item_list(
   void* Py_UNUSED(closure)
 )
 {
-  auto val = PyJsonValue::Get(self);
+  auto& val = PyJsonValue::Get(self);
   if ( !val.is_object() ) {
     PyErr_SetString(PyExc_TypeError, "not an Object type");
     return nullptr;
   }
-  auto item_list = val.item_list();
-  SizeType n = item_list.size();
-  auto ans = PyList_New(n);
-  for ( SizeType i = 0; i < n; ++ i ) {
-    auto& p = item_list[i];
-    auto key = p.first;
-    auto value = p.second;
-    auto value_obj = PyJsonValue::ToPyObject(value);
-    auto item_obj = Py_BuildValue("(sO)", key.c_str(), value_obj);
-    PyList_SetItem(ans, i, item_obj);
+  try {
+    auto item_list = val.item_list();
+    SizeType n = item_list.size();
+    auto ans = PyList_New(n);
+    for ( SizeType i = 0; i < n; ++ i ) {
+      auto& p = item_list[i];
+      auto key = p.first;
+      auto value = p.second;
+      auto value_obj = PyJsonValue::ToPyObject(value);
+      auto item_obj = Py_BuildValue("(sO)", key.c_str(), value_obj);
+      PyList_SetItem(ans, i, item_obj);
+    }
+    return ans;
   }
-  return ans;
+  catch ( std::invalid_argument err ) {
+    PyErr_SetString(PyExc_ValueError, err.what());
+    return nullptr;
+  }
 }
 
 PyGetSetDef JsonValue_getsetters[] = {
@@ -510,7 +534,7 @@ JsonValue_length(
   PyObject* self
 )
 {
-  auto val = PyJsonValue::Get(self);
+  auto& val = PyJsonValue::Get(self);
   if ( !val.is_object() && !val.is_array() ) {
     PyErr_SetString(PyExc_TypeError, "Neighter an object nor an array type");
     return -1;
@@ -524,14 +548,20 @@ JsonValue_item(
   Py_ssize_t index
 )
 {
-  auto val = PyJsonValue::Get(self);
+  auto& val = PyJsonValue::Get(self);
   if ( !val.is_array() ) {
     PyErr_SetString(PyExc_TypeError, "Not an array type");
     return nullptr;
   }
-  int index1 = ( index >= 0 ) ? index : val.size() + index;
-  auto ans = val.at(index1);
-  return PyJsonValue::ToPyObject(ans);
+  try {
+    int index1 = ( index >= 0 ) ? index : val.size() + index;
+    auto ans = val.at(index1);
+    return PyJsonValue::ToPyObject(ans);
+  }
+  catch ( std::invalid_argument err ) {
+    PyErr_SetString(PyExc_ValueError, err.what());
+    return nullptr;
+  }
 }
 
 PySequenceMethods JsonValue_sequence = {
@@ -545,7 +575,7 @@ JsonValue_subscript(
   PyObject* key
 )
 {
-  auto val = PyJsonValue::Get(self);
+  auto& val = PyJsonValue::Get(self);
   if ( PyUnicode_Check(key) ) {
     if ( !val.is_object() ) {
       PyErr_SetString(PyExc_TypeError, "Not an object type");
@@ -598,8 +628,8 @@ JsonValue_richcompfunc(
 {
   if ( PyJsonValue::Check(self) &&
        PyJsonValue::Check(other) ) {
-    auto val1 = PyJsonValue::Get(self);
-    auto val2 = PyJsonValue::Get(other);
+    auto& val1 = PyJsonValue::Get(self);
+    auto& val2 = PyJsonValue::Get(other);
     if ( op == Py_EQ ) {
       return PyBool_FromLong(val1 == val2);
     }
@@ -667,7 +697,7 @@ PyJsonValue::Check(
 }
 
 // @brief JsonValue を表す PyObject から JsonValue を取り出す．
-JsonValue
+const JsonValue&
 PyJsonValue::Get(
   PyObject* obj
 )
