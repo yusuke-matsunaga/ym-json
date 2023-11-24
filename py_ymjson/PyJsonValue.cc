@@ -28,94 +28,6 @@ PyTypeObject JsonValue_Type = {
   PyVarObject_HEAD_INIT(nullptr, 0)
 };
 
-// 様々な型の値を JsonValue に変換する関数
-bool
-conv_to_JsonValue(
-  PyObject* obj,
-  JsonValue& val
-)
-{
-  if ( obj == nullptr ) {
-    // null
-    val = JsonValue{};
-    return true;
-  }
-  // ブール型は他の型との変換が行えるので先にチェックする．
-  if ( obj == Py_True ) {
-    // true
-    val = JsonValue{true};
-    return true;
-  }
-  if ( obj == Py_False ) {
-    // false
-    val = JsonValue{false};
-    return true;
-  }
-  if ( PyJsonValue::Check(obj) ) {
-    // もともと JsonValue 型だった．
-    val = PyJsonValue::Get(obj);
-    return true;
-  }
-  if ( PyUnicode_Check(obj) ) {
-    // 文字列型
-    auto obj2 = PyUnicode_EncodeLocale(obj, nullptr);
-    auto arg_val = string{PyBytes_AsString(obj2)};
-    val = JsonValue{arg_val};
-    return true;
-  }
-  if ( PyLong_Check(obj) ) {
-    // 整数型
-    int arg_val = PyLong_AsLong(obj);
-    val = JsonValue{arg_val};
-    return true;
-  }
-  if ( PyFloat_Check(obj) ) {
-    // 浮動小数点型
-    auto arg_val = PyFloat_AsDouble(obj);
-    val = JsonValue{arg_val};
-    return true;
-  }
-  if ( PyDict_Check(obj) ) {
-    // 辞書(オブジェクト)
-    auto item_list = PyDict_Items(obj);
-    SizeType n = PyList_Size(item_list);
-    unordered_map<string, JsonValue> item_dict;
-    for ( SizeType i = 0; i < n; ++ i ) {
-      auto pair = PyList_GetItem(item_list, i);
-      char* key = nullptr;
-      PyObject* item_obj = nullptr;
-      if ( !PyArg_ParseTuple(pair, "sO", &key, &item_obj) ) {
-	return false;
-      }
-      JsonValue item_val;
-      if ( !conv_to_JsonValue(item_obj, item_val) ) {
-	return false;
-      }
-      item_dict.emplace(key, item_val);
-    }
-    Py_DECREF(item_list);
-    val = JsonValue{item_dict};
-    return true;
-  }
-  if ( PySequence_Check(obj) ) {
-    // リスト
-    SizeType n = PySequence_Size(obj);
-    vector<JsonValue> elem_list(n);
-    for ( SizeType i = 0; i < n; ++ i ) {
-      auto elem_obj = PySequence_GetItem(obj, i);
-      JsonValue elem_val;
-      if ( !conv_to_JsonValue(elem_obj, elem_val) ) {
-	return false;
-      }
-      elem_list[i] = elem_val;
-    }
-    val = JsonValue{elem_list};
-    return true;
-  }
-
-  return false;
-}
-
 // 生成関数
 PyObject*
 JsonValue_new(
@@ -136,7 +48,7 @@ JsonValue_new(
     return nullptr;
   }
   JsonValue val;
-  if ( !conv_to_JsonValue(obj, val) ) {
+  if ( !PyJsonValue::ConvToJsonValue(obj, val) ) {
     PyErr_SetString(PyExc_TypeError, "cannot convert to JsonValue");
     return nullptr;
   }
@@ -704,6 +616,94 @@ PyJsonValue::Get(
 {
   auto json_obj = reinterpret_cast<JsonValueObject*>(obj);
   return *(json_obj->mPtr);
+}
+
+// @brief PyObject を JsonValue に変換する．
+bool
+PyJsonValue::ConvToJsonValue(
+  PyObject* obj,
+  JsonValue& val
+)
+{
+  if ( obj == nullptr ) {
+    // null
+    val = JsonValue{};
+    return true;
+  }
+  // ブール型は他の型との変換が行えるので先にチェックする．
+  if ( obj == Py_True ) {
+    // true
+    val = JsonValue{true};
+    return true;
+  }
+  if ( obj == Py_False ) {
+    // false
+    val = JsonValue{false};
+    return true;
+  }
+  if ( PyJsonValue::Check(obj) ) {
+    // もともと JsonValue 型だった．
+    val = PyJsonValue::Get(obj);
+    return true;
+  }
+  if ( PyUnicode_Check(obj) ) {
+    // 文字列型
+    auto obj2 = PyUnicode_EncodeLocale(obj, nullptr);
+    auto arg_val = string{PyBytes_AsString(obj2)};
+    val = JsonValue{arg_val};
+    return true;
+  }
+  if ( PyLong_Check(obj) ) {
+    // 整数型
+    int arg_val = PyLong_AsLong(obj);
+    val = JsonValue{arg_val};
+    return true;
+  }
+  if ( PyFloat_Check(obj) ) {
+    // 浮動小数点型
+    auto arg_val = PyFloat_AsDouble(obj);
+    val = JsonValue{arg_val};
+    return true;
+  }
+  if ( PyDict_Check(obj) ) {
+    // 辞書(オブジェクト)
+    auto item_list = PyDict_Items(obj);
+    SizeType n = PyList_Size(item_list);
+    unordered_map<string, JsonValue> item_dict;
+    for ( SizeType i = 0; i < n; ++ i ) {
+      auto pair = PyList_GetItem(item_list, i);
+      char* key = nullptr;
+      PyObject* item_obj = nullptr;
+      if ( !PyArg_ParseTuple(pair, "sO", &key, &item_obj) ) {
+	return false;
+      }
+      JsonValue item_val;
+      if ( !ConvToJsonValue(item_obj, item_val) ) {
+	return false;
+      }
+      item_dict.emplace(key, item_val);
+    }
+    Py_DECREF(item_list);
+    val = JsonValue{item_dict};
+    return true;
+  }
+  if ( PySequence_Check(obj) ) {
+    // リスト
+    SizeType n = PySequence_Size(obj);
+    vector<JsonValue> elem_list(n);
+    for ( SizeType i = 0; i < n; ++ i ) {
+      auto elem_obj = PySequence_GetItem(obj, i);
+      JsonValue elem_val;
+      if ( !ConvToJsonValue(elem_obj, elem_val) ) {
+	return false;
+      }
+      elem_list[i] = elem_val;
+    }
+    val = JsonValue{elem_list};
+    return true;
+  }
+
+  return false;
 }
 
 // @brief JsonValue を表すオブジェクトの型定義を返す．

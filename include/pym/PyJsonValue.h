@@ -65,7 +65,16 @@ public:
     PyObject* obj ///< [in] 変換元の PyObject
   );
 
-  /// @brief mt19937 を表すオブジェクトの型定義を返す．
+  /// @brief PyObject を JsonValue に変換する．
+  /// @return 変換に成功した true を返す．
+  static
+  bool
+  ConvToJsonValue(
+    PyObject* obj, ///< [in] 対象の PyObject
+    JsonValue& val ///< [out] 変換後の値を格納する変数
+  );
+
+  /// @brief JsonValue を表すオブジェクトの型定義を返す．
   static
   PyTypeObject*
   _typeobject();
