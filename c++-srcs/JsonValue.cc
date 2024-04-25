@@ -218,6 +218,19 @@ JsonValue::at(
   return mPtr->get_value(key);
 }
 
+// @brief キーに対応する要素を取り出す．
+JsonValue
+JsonValue::get(
+  const string& key
+) const
+{
+  _check_object();
+  if ( has_key(key) ) {
+    return at(key);
+  }
+  return JsonValue::null();
+}
+
 // @brief 配列の要素を得る．
 JsonValue
 JsonValue::at(

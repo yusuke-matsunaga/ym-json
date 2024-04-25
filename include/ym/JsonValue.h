@@ -190,6 +190,15 @@ public:
     const string& key ///< [in] キー
   ) const;
 
+  /// @brief キーに対応する要素を取り出す．
+  ///
+  /// - is_object() == false の時は std::invalid_argument 例外を送出する．
+  /// - key に対応する値がない場合には null を返す．
+  JsonValue
+  get(
+    const string& key ///< [in] キー
+  ) const;
+
   /// @brief 配列の要素を得る．
   ///
   /// - is_array() == false の時は std::invalid_argument 例外を送出する．
